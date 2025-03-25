@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block title %}Newsletter Signup - DSM Times{% endblock %}
+{% block content %}
+    <h1 class="text-4xl font-bold mb-8">Sign Up for Our Newsletter</h1>
+    <form method="post" class="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg max-w-md mx-auto">
+        {% csrf_token %}
+        <input type="email" name="email" class="w-full p-3 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 mb-4" placeholder="Enter your email" required>
+        <button type="submit" class="bg-blue-600 text-white py-3 px-6 rounded hover:bg-blue-700 transition duration-200">Subscribe</button>
+    </form>
+{% endblock %}

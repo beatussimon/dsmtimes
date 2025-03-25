@@ -1,0 +1,87 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" {% if request.session.dark_mode %}class="dark"{% endif %}>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="DSM Times - Your premier source for technology, science, and culture news.">
+    <meta name="keywords" content="technology, science, culture, news, DSM Times">
+    <title>{% block title %}DSM Times{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/custom.css' %}">
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans antialiased">
+    <header class="bg-gray-900 text-white shadow-lg sticky top-0 z-50">
+        <nav class="container mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center">
+            <div class="flex justify-between w-full sm:w-auto items-center">
+                <a href="{% url 'home' %}" class="text-3xl font-extrabold tracking-tight">DSM Times</a>
+                <button class="sm:hidden text-2xl focus:outline-none" onclick="document.getElementById('nav-menu').classList.toggle('hidden')">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+            <div id="nav-menu" class="hidden sm:flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-6 mt-4 sm:mt-0 w-full sm:w-auto">
+                <a href="{% url 'home' %}" class="hover:text-blue-400 transition duration-200 text-lg">Home</a>
+                {% for category in categories %}
+                    <a href="{% url 'search' %}?q={{ category.name }}" class="hover:text-blue-400 transition duration-200 text-lg">{{ category.name }}</a>
+                {% endfor %}
+                <a href="{% url 'search' %}" class="hover:text-blue-400 transition duration-200"><i class="fas fa-search"></i></a>
+                {% if user.is_authenticated %}
+                    {% if user.userprofile.is_editor %}
+                        <a href="{% url 'submit_article' %}" class="hover:text-blue-400 transition duration-200">Submit</a>
+                        <a href="{% url 'profile' %}" class="hover:text-blue-400 transition duration-200">Profile</a>
+                    {% endif %}
+                    <a href="{% url 'logout' %}" class="hover:text-blue-400 transition duration-200">Logout</a>
+                {% else %}
+                    <a href="{% url 'login' %}" class="hover:text-blue-400 transition duration-200">Login</a>
+                    <a href="{% url 'register' %}" class="hover:text-blue-400 transition duration-200">Register</a>
+                {% endif %}
+                <a href="{% url 'toggle_dark_mode' %}" class="hover:text-blue-400 transition duration-200">
+                    {% if request.session.dark_mode %}<i class="fas fa-sun"></i>{% else %}<i class="fas fa-moon"></i>{% endif %}
+                </a>
+            </div>
+        </nav>
+    </header>
+    <main class="container mx-auto px-4 py-8">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="bg-{{ message.tags }}-100 dark:bg-{{ message.tags }}-800 border-l-4 border-{{ message.tags }}-500 text-{{ message.tags }}-700 dark:text-{{ message.tags }}-200 p-4 mb-6 rounded-lg">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+        {% block content %}{% endblock %}
+    </main>
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="container mx-auto px-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+            <div>
+                <h3 class="text-2xl font-bold mb-4">DSM Times</h3>
+                <p class="text-gray-400">Your premier source for cutting-edge news and insights.</p>
+            </div>
+            <div>
+                <h3 class="text-2xl font-bold mb-4">Quick Links</h3>
+                <ul class="space-y-3 text-gray-400">
+                    <li><a href="{% url 'home' %}" class="hover:text-blue-400 transition">Home</a></li>
+                    <li><a href="{% url 'subscribe' %}" class="hover:text-blue-400 transition">Subscribe</a></li>
+                    <li><a href="{% url 'profile' %}" class="hover:text-blue-400 transition">Profile</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3 class="text-2xl font-bold mb-4">Newsletter</h3>
+                <form action="{% url 'newsletter_signup' %}" method="post" class="flex">
+                    {% csrf_token %}
+                    <input type="email" name="email" placeholder="Your email" class="p-2 rounded-l-md bg-gray-800 text-white border-none w-2/3 focus:ring-2 focus:ring-blue-500" required>
+                    <button type="submit" class="bg-blue-600 text-white p-2 rounded-r-md hover:bg-blue-700 transition">Subscribe</button>
+                </form>
+                <div class="mt-6 flex space-x-4 justify-center">
+                    <a href="#" class="text-gray-400 hover:text-blue-400 transition"><i class="fab fa-twitter text-xl"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-blue-400 transition"><i class="fab fa-facebook text-xl"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-blue-400 transition"><i class="fab fa-instagram text-xl"></i></a>
+                </div>
+            </div>
+        </div>
+        <p class="text-center mt-8 text-gray-400">© 2025 DSM Times. All rights reserved.</p>
+    </footer>
+    <script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>

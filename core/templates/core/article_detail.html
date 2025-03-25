@@ -1,0 +1,92 @@
+{% extends 'core/base.html' %}
+{% block title %}{{ article.title }} - DSM Times{% endblock %}
+{% block content %}
+    <article class="bg-white dark:bg-gray-800 p-6 md:p-8 rounded-lg shadow-lg max-w-4xl mx-auto">
+        {% if article.featured_image %}
+            <img src="{{ article.featured_image.url }}" class="w-full h-64 md:h-96 object-cover rounded-lg mb-6" alt="{{ article.title }}">
+        {% else %}
+            <div class="w-full h-64 md:h-96 bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-500 dark:text-gray-400 rounded-lg mb-6">
+                No Image Available
+            </div>
+        {% endif %}
+        <div class="flex items-center justify-between mb-4">
+            <span class="text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wide">{{ article.category.name }}</span>
+            <div class="flex space-x-4">
+                <a href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri|urlencode }}&text={{ article.title|urlencode }}" target="_blank" class="text-blue-400 hover:text-blue-500">
+                    <i class="fab fa-twitter text-xl"></i>
+                </a>
+                <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri|urlencode }}" target="_blank" class="text-blue-600 hover:text-blue-700">
+                    <i class="fab fa-facebook text-xl"></i>
+                </a>
+            </div>
+        </div>
+        <h1 class="text-3xl md:text-4xl font-bold mb-4 text-gray-900 dark:text-white">{{ article.title }}</h1>
+        <p class="text-gray-600 dark:text-gray-400 mb-6">
+            By {{ article.author.username }} | {{ article.published_at|date:"F d, Y" }} | {{ article.views_count }} views | {{ article.read_time_minutes }} min read
+        </p>
+        <div class="prose dark:prose-invert max-w-none text-gray-800 dark:text-gray-200">{{ article.content|safe }}</div>
+    </article>
+
+    <!-- Tags -->
+    {% if article.tags.all %}
+        <section class="max-w-4xl mx-auto mt-6">
+            <h2 class="text-xl font-semibold mb-3 text-gray-900 dark:text-white">Tags</h2>
+            <div class="flex flex-wrap gap-2">
+                {% for tag in article.tags.all %}
+                    <span class="bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-sm font-medium px-3 py-1 rounded">
+                        {{ tag.name }}
+                    </span>
+                {% endfor %}
+            </div>
+        </section>
+    {% endif %}
+
+    <!-- Comments -->
+    <section class="max-w-4xl mx-auto mt-12">
+        <h2 class="text-2xl font-semibold mb-6 text-gray-900 dark:text-white">Comments</h2>
+        {% for comment in comments %}
+            <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md mb-4">
+                <p class="text-gray-700 dark:text-gray-300">{{ comment.content }}</p>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">
+                    By {{ comment.user.username }} | {{ comment.created_at|date:"F d, Y H:i" }}
+                </p>
+            </div>
+        {% empty %}
+            <p class="text-gray-600 dark:text-gray-400">No comments yet. Be the first to comment!</p>
+        {% endfor %}
+        {% if user.is_authenticated %}
+            <form method="post" class="mt-6">
+                {% csrf_token %}
+                <textarea name="content" class="w-full p-3 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 focus:ring-2 focus:ring-blue-500" rows="4" placeholder="Add your comment..." required></textarea>
+                <button type="submit" class="mt-4 bg-blue-600 text-white py-2 px-6 rounded hover:bg-blue-700 transition">Submit Comment</button>
+            </form>
+        {% else %}
+            <p class="text-gray-600 dark:text-gray-400 mt-4">
+                <a href="{% url 'login' %}" class="text-blue-600 hover:underline">Login</a> to add a comment.
+            </p>
+        {% endif %}
+    </section>
+
+    <!-- Related Articles -->
+    {% if related_articles %}
+        <section class="max-w-4xl mx-auto mt-12">
+            <h2 class="text-2xl font-semibold mb-6 text-gray-900 dark:text-white">Related Stories</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                {% for related in related_articles %}
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition">
+                        {% if related.featured_image %}
+                            <img src="{{ related.featured_image.url }}" class="w-full h-40 object-cover" alt="{{ related.title }}">
+                        {% else %}
+                            <div class="w-full h-40 bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-500 dark:text-gray-400">No Image</div>
+                        {% endif %}
+                        <div class="p-4">
+                            <span class="text-sm text-gray-500 dark:text-gray-400">{{ related.category.name }}</span>
+                            <h3 class="text-lg font-semibold mt-2 text-gray-900 dark:text-white">{{ related.title }}</h3>
+                            <a href="{% url 'article_detail' related.slug %}" class="mt-2 inline-block text-blue-600 hover:underline">Read More</a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+    {% endif %}
+{% endblock %}

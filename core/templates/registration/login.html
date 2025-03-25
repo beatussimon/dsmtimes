@@ -1,0 +1,25 @@
+{% extends 'core/base.html' %}
+{% block title %}Login - DSM Times{% endblock %}
+{% block content %}
+    <div class="max-w-md mx-auto mt-12 p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg">
+        <h1 class="text-3xl font-bold mb-6 text-center">Login</h1>
+        {% if form.errors %}
+            <p class="text-red-600 mb-4">Your username or password didn’t match. Please try again.</p>
+        {% endif %}
+        <form method="post" class="space-y-4">
+            {% csrf_token %}
+            <div>
+                <label for="{{ form.username.id_for_label }}" class="block text-gray-700 dark:text-gray-300">Username</label>
+                <input type="text" name="{{ form.username.html_name }}" id="{{ form.username.id_for_label }}" class="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100" required>
+            </div>
+            <div>
+                <label for="{{ form.password.id_for_label }}" class="block text-gray-700 dark:text-gray-300">Password</label>
+                <input type="password" name="{{ form.password.html_name }}" id="{{ form.password.id_for_label }}" class="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100" required>
+            </div>
+            <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition duration-200">Login</button>
+        </form>
+        <p class="mt-4 text-center text-gray-600 dark:text-gray-400">
+            Don’t have an account? <a href="{% url 'register' %}" class="text-blue-600 hover:underline">Register</a>
+        </p>
+    </div>
+{% endblock %}

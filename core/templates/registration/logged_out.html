@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block title %}Logged Out - DSM Times{% endblock %}
+{% block content %}
+    <div class="max-w-md mx-auto mt-12 p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg text-center">
+        <h1 class="text-3xl font-bold mb-6">Logged Out</h1>
+        <p class="text-gray-700 dark:text-gray-300 mb-4">You have been successfully logged out.</p>
+        <a href="{% url 'login' %}" class="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition duration-200">Login Again</a>
+    </div>
+{% endblock %}

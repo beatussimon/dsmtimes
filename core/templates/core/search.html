@@ -1,0 +1,29 @@
+{% extends 'core/base.html' %}
+{% block title %}Search - DSM Times{% endblock %}
+{% block content %}
+    <h1 class="text-4xl font-bold mb-8">Search Results</h1>
+    <form method="get" class="mb-8 flex flex-col md:flex-row gap-4">
+        <input type="text" name="q" value="{{ query }}" class="w-full md:w-3/4 p-3 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100" placeholder="Search articles...">
+        <button type="submit" class="bg-blue-600 text-white py-3 px-6 rounded hover:bg-blue-700 transition duration-200">Search</button>
+    </form>
+    {% if query %}
+        <h2 class="text-2xl font-bold mb-6">Results for "{{ query }}"</h2>
+        {% if results %}
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {% for article in results %}
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition duration-300">
+                        <img src="{{ article.featured_image.url }}" class="w-full h-48 object-cover" alt="{{ article.title }}">
+                        <div class="p-4">
+                            <span class="text-sm text-gray-500 dark:text-gray-400">{{ article.category.name }}</span>
+                            <h3 class="text-xl font-semibold mt-2">{{ article.title }}</h3>
+                            <p class="mt-2 text-gray-700 dark:text-gray-300">{{ article.summary|truncatewords:20 }}</p>
+                            <a href="{% url 'article_detail' article.slug %}" class="mt-4 inline-block text-blue-600 hover:underline">Read More</a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-gray-600 dark:text-gray-400">No results found for "{{ query }}". Try a different search term.</p>
+        {% endif %}
+    {% endif %}
+{% endblock %}
