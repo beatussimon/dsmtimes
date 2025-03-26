@@ -1,64 +1,88 @@
 {% extends 'core/base.html' %}
+{% load article_tags %}
 {% block title %}{{ article.title }} - DSM Times{% endblock %}
 {% block content %}
-    <article class="max-w-4xl mx-auto bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg shadow-lg">
+    <article class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <!-- Featured Image -->
         {% if article.featured_image %}
-            <img src="{{ article.featured_image.url }}" class="w-full h-48 sm:h-64 md:h-96 object-cover rounded-lg mb-6" alt="{{ article.title }}">
+            <figure class="mb-10">
+                <img src="{{ article.featured_image.url }}" class="w-full h-48 sm:h-64 md:h-96 object-cover rounded-lg shadow-md" alt="{{ article.title }}">
+            </figure>
         {% else %}
-            <div class="w-full h-48 sm:h-64 md:h-96 bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-500 dark:text-gray-400 rounded-lg mb-6">
+            <div class="w-full h-48 sm:h-64 md:h-96 bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-500 dark:text-gray-400 rounded-lg shadow-md mb-10">
                 No Image Available
             </div>
         {% endif %}
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4">
-            <span class="text-sm uppercase text-gray-500 dark:text-gray-400 {% if article.category.is_special %}special-category{% endif %}" data-color="{{ article.category.color }}">
-                {{ article.category.name }}
-                {% if article.category.is_special %}
-                    <span class="text-xs bg-red-500 text-white rounded-full px-1">!</span>
-                {% endif %}
-            </span>
-            <div class="flex space-x-4 mt-2 sm:mt-0">
-                <a href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri|urlencode }}&text={{ article.title|urlencode }}" target="_blank" class="text-blue-400 hover:text-blue-500">
-                    <i class="fab fa-twitter text-xl"></i>
-                </a>
-                <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri|urlencode }}" target="_blank" class="text-blue-600 hover:text-blue-700">
-                    <i class="fab fa-facebook text-xl"></i>
-                </a>
+
+        <!-- Header Section -->
+        <header class="mb-10 border-b border-gray-200 dark:border-gray-700 pb-6">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4">
+                <span class="text-sm uppercase text-gray-500 dark:text-gray-400 {% if article.category.is_special %}special-category{% endif %}" data-color="{{ article.category.color }}">
+                    {{ article.category.name }}
+                    {% if article.category.is_special %}
+                        <span class="text-xs bg-red-500 text-white rounded-full px-1">!</span>
+                    {% endif %}
+                </span>
+                <div class="flex space-x-4 mt-2 sm:mt-0">
+                    <a href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri|urlencode }}&text={{ article.title|urlencode }}" target="_blank" class="text-blue-400 hover:text-blue-500">
+                        <i class="fab fa-twitter text-xl"></i>
+                    </a>
+                    <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri|urlencode }}" target="_blank" class="text-blue-600 hover:text-blue-700">
+                        <i class="fab fa-facebook text-xl"></i>
+                    </a>
+                </div>
             </div>
-        </div>
-        <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-gray-900 dark:text-white leading-tight">{{ article.title }}</h1>
-        <div class="flex items-center justify-between mb-6 text-sm text-gray-600 dark:text-gray-300">
-            <p>
-                By <a href="{% url 'public_profile' article.author.username %}" class="text-blue-600 hover:underline">{{ article.author.username }}</a> | {{ article.published_at|date:"F d, Y" }} | {{ article.views_count }} views | {{ article.read_time_minutes }} min read
-            </p>
-            <form method="post" class="flex items-center">
-                {% csrf_token %}
-                <input type="hidden" name="action" value="like_article">
-                <button type="submit" class="flex items-center text-gray-600 dark:text-gray-300 hover:text-blue-600">
-                    <i class="fas fa-heart {% if user in article.likes.all %}text-red-500{% endif %}"></i>
-                    <span class="ml-1">{{ article.likes.count }}</span>
-                </button>
-            </form>
-        </div>
-        <div class="prose dark:prose-invert max-w-none  dark:text-gray-100 mb-6 leading-relaxed">
+            <h1 class="text-3xl sm:text-4xl font-bold mb-4 text-gray-900 dark:text-white leading-tight">{{ article.title }}</h1>
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between text-sm text-gray-600 dark:text-gray-300 space-y-2 sm:space-y-0">
+                <p>
+                    By <a href="{% url 'public_profile' article.author.username %}" class="text-blue-600 hover:underline">{{ article.author.username }}</a> | {{ article.published_at|date:"F d, Y" }} | {{ article.views_count }} views | {{ article.read_time_minutes }} min read
+                </p>
+                <form method="post" class="flex items-center">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="like_article">
+                    <button type="submit" class="flex items-center text-gray-600 dark:text-gray-300 hover:text-blue-600">
+                        <i class="fas fa-heart {% if user in article.likes.all %}text-red-500{% endif %}"></i>
+                        <span class="ml-1">{{ article.likes.count }}</span>
+                    </button>
+                </form>
+            </div>
+        </header>
+<!-- Article Content -->
+<div class="prose prose-lg dark:prose-invert max-w-none text-gray-800 dark:text-white leading-relaxed mb-10 article-content">
+    {% if article.content|length > 0 %}
+        {% if article.content|slice:":4" == "<h2>" or article.content|slice:":3" == "<p>" or article.content|slice:":4" == "<ul>" %}
             {{ article.content|safe }}
-            {% for item in media %}
-                {% if item.media_type == 'image' and item.media_file %}
-                    <figure class="my-6">
-                        <img src="{{ item.media_file.url }}" class="w-full h-auto rounded-lg" alt="Article media">
-                        <figcaption class="text-sm text-gray-500 dark:text-gray-400 mt-2">Additional image</figcaption>
-                    </figure>
-                {% elif item.media_type == 'video' and item.media_url %}
-                    <div class="my-6">
-                        <iframe src="{{ item.media_url }}" class="w-full h-48 sm:h-64 md:h-96 rounded-lg" frameborder="0" allowfullscreen></iframe>
-                    </div>
-                {% endif %}
-            {% endfor %}
-        </div>
-    </article>
+        {% else %}
+            <p>{{ article.content|linebreaks }}</p>
+        {% endif %}
+        {% for item in media %}
+            {% if item.media_type == 'image' and item.media_file %}
+                <figure class="my-8">
+                    <img src="{{ item.media_file.url }}" class="w-full h-auto rounded-lg shadow-md" alt="Article media">
+                    <figcaption class="text-sm text-gray-500 dark:text-gray-400 mt-2">Additional image</figcaption>
+                </figure>
+            {% elif item.media_type == 'video' and item.media_file and item.media_file.url|slice:"-4:" == ".mp4" %}
+                <div class="my-8">
+                    <video controls class="w-full h-auto rounded-lg shadow-md">
+                        <source src="{{ item.media_file.url }}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <figcaption class="text-sm text-gray-500 dark:text-gray-400 mt-2">Additional video</figcaption>
+                </div>
+            {% elif item.media_type == 'video' and item.media_url %}
+                <div class="my-8">
+                    <iframe src="{{ item.media_url|default_if_none:''|regex_replace:'^https?://(www\.)?youtube\.com/watch\?v=([^&]+).*||https://www.youtube.com/embed/$2' }}" class="w-full h-48 sm:h-64 md:h-80 rounded-lg shadow-md" frameborder="0" allowfullscreen></iframe>
+                </div>
+            {% endif %}
+        {% endfor %}
+    {% else %}
+        <p class="italic text-gray-500 dark:text-gray-400">No content available.</p>
+    {% endif %}
+</div>
 
     <!-- Tags -->
     {% if article.tags.all %}
-        <section class="max-w-4xl mx-auto mt-6 px-4 sm:px-0">
+        <section class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
             <h2 class="text-xl font-semibold mb-3 text-gray-900 dark:text-white">Tags</h2>
             <div class="flex flex-wrap gap-2">
                 {% for tag in article.tags.all %}
@@ -71,14 +95,14 @@
     {% endif %}
 
     <!-- Comments Section -->
-    <section class="max-w-4xl mx-auto mt-12 px-4 sm:px-0">
+    <section class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-12">
         <h2 class="text-2xl font-semibold mb-6 text-gray-900 dark:text-white">Comments ({{ article.comments.count }})</h2>
         {% if user.is_authenticated %}
-            <form method="post" class="mb-6" id="comment-form">
+            <form method="post" class="mb-8" id="comment-form">
                 {% csrf_token %}
                 <input type="hidden" name="action" value="comment">
                 <input type="hidden" name="comment_id" id="comment-id">
-                <textarea name="content" id="comment-content" class="w-full p-3 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 focus:ring-2 focus:ring-blue-500" rows="4" placeholder="Add your comment..." required></textarea>
+                <textarea name="content" id="comment-content" class="w-full p-3 border rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 border-gray-300 dark:border-gray-600" rows="4" placeholder="Add your comment..." required></textarea>
                 <button type="submit" class="mt-4 bg-blue-600 text-white py-2 px-6 rounded hover:bg-blue-700 transition" id="submit-btn">Post Comment</button>
             </form>
             <script>
@@ -95,7 +119,7 @@
         {% endif %}
         {% for comment in comments %}
             <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md mb-4">
-                <p class="text-gray-700 dark:text-gray-100">{{ comment.content|safe }}</p>
+                <p class="text-gray-700 dark:text-white">{{ comment.content|safe }}</p>
                 <div class="flex items-center justify-between text-sm text-gray-500 dark:text-gray-300 mt-2">
                     <p>
                         By <a href="{% url 'public_profile' comment.user.username %}" class="text-blue-600 hover:underline">{{ comment.user.username }}</a> | {{ comment.created_at|date:"F d, Y H:i" }}
@@ -125,14 +149,14 @@
                         {% csrf_token %}
                         <input type="hidden" name="action" value="comment">
                         <input type="hidden" name="parent_id" value="{{ comment.id }}">
-                        <textarea name="content" class="w-full p-3 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 focus:ring-2 focus:ring-blue-500" rows="3" placeholder="Reply to {{ comment.user.username }}..." required></textarea>
+                        <textarea name="content" class="w-full p-3 border rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 border-gray-300 dark:border-gray-600" rows="3" placeholder="Reply to {{ comment.user.username }}..." required></textarea>
                         <button type="submit" class="mt-2 bg-blue-600 text-white py-1 px-4 rounded hover:bg-blue-700 transition">Post Reply</button>
                     </form>
                 {% endif %}
                 <!-- Replies -->
                 {% for reply in comment.replies.all %}
                     <div class="ml-6 mt-4 bg-gray-50 dark:bg-gray-700 p-3 rounded-lg">
-                        <p class="text-gray-700 dark:text-gray-100">{{ reply.content|safe }}</p>
+                        <p class="text-gray-700 dark:text-white">{{ reply.content|safe }}</p>
                         <div class="flex items-center justify-between text-sm text-gray-500 dark:text-gray-300 mt-2">
                             <p>
                                 By <a href="{% url 'public_profile' reply.user.username %}" class="text-blue-600 hover:underline">{{ reply.user.username }}</a> | {{ reply.created_at|date:"F d, Y H:i" }}
@@ -158,7 +182,7 @@
 
     <!-- Related Articles -->
     {% if related_articles %}
-        <section class="max-w-4xl mx-auto mt-12 px-4 sm:px-0">
+        <section class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-12">
             <h2 class="text-2xl font-semibold mb-6 text-gray-900 dark:text-white">Related Stories</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 {% for related in related_articles %}
@@ -173,7 +197,8 @@
                                 {{ related.category.name }}
                                 {% if related.category.is_special %}
                                     <span class="text-xs bg-red-500 text-white rounded-full px-1">!</span>
-                                {% endif %}
+                                </span>
+                            {% endif %}
                             </span>
                             <h3 class="text-lg font-semibold mt-2 text-gray-900 dark:text-white">{{ related.title }}</h3>
                             <a href="{% url 'article_detail' related.slug %}" class="mt-2 inline-block text-blue-600 hover:underline">Read More</a>

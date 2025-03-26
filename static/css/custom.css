@@ -168,3 +168,36 @@ body {
     font-weight: 400;
     font-style: normal;
 }
+
+
+.prose {
+    font-family: 'Georgia', serif; /* Softer serif */
+    /* Or 'Roboto', sans-serif for a modern, clean look */
+}
+
+
+.blog-content {
+    color: #1f2937; /* Matches text-gray-800 */
+}
+
+.dark .blog-content {
+    color: #e2e8f0 !important; /* Overrides .dark { color: #e2e8f0 !important; } */
+}
+
+
+
+.article-content {
+    color: #1f2937; /* text-gray-800 for light mode */
+}
+.dark .article-content {
+    color: #ffffff !important; /* Forces white in dark mode */
+}
+.dark .article-content p,
+.dark .article-content h1,
+.dark .article-content h2,
+.dark .article-content h3,
+.dark .article-content h4,
+.dark .article-content h5,
+.dark .article-content h6 {
+    color: #ffffff !important; /* Ensures all prose children are white */
+}

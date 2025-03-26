@@ -1,29 +1,35 @@
-/* static/css/custom.css */
 body {
     font-family: 'Times New Roman', Times, serif;
 }
+
+/* Simplified dark mode base - only body override */
 .dark {
     background-color: #1a202c !important;
     color: #e2e8f0 !important;
 }
+
 .font-handwritten {
     font-family: 'Sacramento', cursive;
     font-weight: 800;
     letter-spacing: 1px;
 }
+
 .prose {
     line-height: 1.75;
     font-size: 1.125rem;
     letter-spacing: 0.01em;
 }
+
 .prose h2 {
     font-size: 1.5rem;
     margin-top: 2rem;
     margin-bottom: 1rem;
 }
+
 .prose p {
     margin-bottom: 1.25rem;
 }
+
 .prose blockquote {
     border-left: 4px solid #3b82f6;
     padding-left: 1rem;
@@ -31,54 +37,75 @@ body {
     color: #4b5563;
     margin: 1.5rem 0;
 }
+
 .dark .prose blockquote {
     border-left-color: #60a5fa;
     color: #d1d5db;
 }
+
 .prose div.bg-gray-100, .prose div.bg-gray-700 {
     padding: 1rem;
     border-radius: 0.5rem;
     margin: 1.5rem 0;
 }
+
 .dark .prose-invert {
     color: #e5e7eb;
 }
+
 #nav-menu {
     transition: all 0.3s ease;
 }
+
 .category-line {
     transition: width 0.3s ease;
 }
+
 .special-category {
     transition: color 0.2s ease;
 }
+
+/* Specific dark mode overrides - less aggressive */
 .dark .bg-white {
-    background-color: #2d3748 !important;
+    background-color: #2d3748;
 }
+
 .dark .bg-gray-50 {
-    background-color: #1a202c !important;
+    background-color: #1a202c;
 }
+
 .dark .bg-gray-200 {
-    background-color: #4a5568 !important;
+    background-color: #4a5568;
 }
+
 .dark .bg-gray-800 {
-    background-color: #2d3748 !important;
+    background-color: #2d3748;
 }
+
 .dark .text-gray-900 {
-    color: #e2e8f0 !important;
+    color: #e2e8f0;
 }
+
 .dark .text-gray-700 {
-    color: #d1d5db !important;
+    color: #d1d5db;
 }
+
 .dark .text-gray-600 {
-    color: #a0aec0 !important;
+    color: #a0aec0;
 }
+
 .dark .text-gray-500 {
-    color: #a0aec0 !important;
+    color: #a0aec0;
 }
+
 .dark .border-gray-600 {
-    border-color: #4a5568 !important;
+    border-color: #4a5568;
 }
+
+.dark .border-gray-200 {
+    border-color: #4a5568;
+}
+
 @media (max-width: 640px) {
     .container {
         padding-left: 1rem;
@@ -95,23 +122,24 @@ body {
     .font-handwritten {
         font-size: 2.25rem;
     }
-    .sm\\:inline {
+    .sm\:inline {
         display: none !important;
     }
     .grid-cols-3 {
         grid-template-columns: 1fr;
     }
 }
+
 @media (min-width: 641px) and (max-width: 1023px) {
     nav .flex-wrap {
         flex-wrap: wrap;
     }
-    .sm\\:flex-col {
+    .sm\:flex-col {
         flex-direction: row;
         flex-wrap: wrap;
         justify-content: center;
     }
-    .sm\\:flex-col > div {
+    .sm\:flex-col > div {
         margin: 0.5rem;
     }
     .font-handwritten {
@@ -121,25 +149,37 @@ body {
         grid-template-columns: 1fr 1fr;
     }
 }
+
 @media (min-width: 1024px) {
     .font-handwritten {
         font-size: 3rem;
     }
 }
 
-
-
-
 .dancing-script-700 {
     font-family: "Dancing Script", cursive;
-    font-weight: 700; /* Bold */
+    font-weight: 700;
     font-optical-sizing: auto;
     font-style: normal;
-  }
-  
-  .lobster-regular {
+}
+
+.lobster-regular {
     font-family: "Lobster", sans-serif;
-    font-weight: 400; /* Regular */
+    font-weight: 400;
     font-style: normal;
-  }
-  
+}
+
+
+.prose {
+    font-family: 'Georgia', serif; /* Softer serif */
+    /* Or 'Roboto', sans-serif for a modern, clean look */
+}
+
+
+.blog-content {
+    color: #1f2937; /* Matches text-gray-800 */
+}
+
+.dark .blog-content {
+    color: #e2e8f0 !important; /* Overrides .dark { color: #e2e8f0 !important; } */
+}

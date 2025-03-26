@@ -5,4 +5,5 @@ class CoreConfig(AppConfig):
     name = 'core'
 
     def ready(self):
-        import core.signals  # Ensure signals are imported  
+        import core.signals  # Ensure signals are imported
+        import core.templatetags.article_tags  # Import template tags for regex_replace
