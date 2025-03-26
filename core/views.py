@@ -8,7 +8,7 @@ from django.contrib import messages
 from django.db.models import Q, Count
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import UserCreationForm
-from .models import Article, Category, SubscriptionPlan, Comment, NewsletterSubscription, UserProfile, Tag, ArticleMedia,Feedback,FAQ
+from .models import Article, Category, SubscriptionPlan, Comment, NewsletterSubscription, UserProfile, Tag, ArticleMedia,Feedback,FAQ,BlogPost
 from django import forms
 from django.core.paginator import Paginator
 import datetime
@@ -285,8 +285,8 @@ def feedback(request):
     return render(request, 'core/feedback.html')
 
 def blog(request):
-    articles = Article.objects.filter(status='published').order_by('-published_at')
-    paginator = Paginator(articles, 10)
+    blog_posts = BlogPost.objects.filter(status='published').order_by('-published_at')
+    paginator = Paginator(blog_posts, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     return render(request, 'core/blog.html', {'page_obj': page_obj})
@@ -416,19 +416,33 @@ def custom_admin(request):
     })
 
 def feedback(request):
+    # Fetch all feedback, excluding hidden ones unless user is chief editor
+    if request.user.is_authenticated and hasattr(request.user, 'userprofile') and request.user.userprofile.is_chief_editor:
+        feedbacks = Feedback.objects.all().order_by('-submitted_at')
+    else:
+        feedbacks = Feedback.objects.filter(is_hidden=False).order_by('-submitted_at')
+
     if request.method == 'POST':
         message = request.POST.get('message')
         user = request.user if request.user.is_authenticated else None
         feedback_entry = Feedback(user=user, message=message)
         feedback_entry.save()
-        # Optional: Keep the email notification if desired
+        # Send email notification (optional)
         send_mail(
             'Feedback from DSM Times User',
             f'Message: {message}\nFrom: {user.username if user else "Anonymous"}',
             settings.EMAIL_HOST_USER,
             [settings.EMAIL_HOST_USER],
-            fail_silently=True,  # Changed to True to avoid errors if email fails
+            fail_silently=True,
         )
         messages.success(request, 'Feedback submitted successfully.')
         return redirect('feedback')
-    return render(request, 'core/feedback.html')
+
+    return render(request, 'core/feedback.html', {'feedbacks': feedbacks})
+
+
+def blog_post_detail(request, slug):
+    post = get_object_or_404(BlogPost, slug=slug, status='published')
+    post.views_count += 1
+    post.save(update_fields=['views_count'])
+    return render(request, 'core/blog_post_detail.html', {'post': post})

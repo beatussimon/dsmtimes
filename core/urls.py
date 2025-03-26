@@ -25,6 +25,7 @@ urlpatterns = [
     path('faq/', views.faq, name='faq'),
     path('feedback/', views.feedback, name='feedback'),
     path('blog/', views.blog, name='blog'),
+    path('blog/<slug:slug>/', views.blog_post_detail, name='blog_post_detail'),
 ]
 
 if settings.DEBUG:

@@ -2,7 +2,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User, Group
-from .models import Article, Category, SubscriptionPlan, Comment, NewsletterSubscription, UserProfile, Tag, ArticleMedia, FAQ, Feedback
+from .models import Article, Category, SubscriptionPlan, Comment, NewsletterSubscription, UserProfile, Tag, ArticleMedia, FAQ, Feedback,BlogPost
 from django.db.models.signals import post_migrate
 from django.dispatch import receiver
 from django.utils import timezone
@@ -46,6 +46,7 @@ dsm_admin_site.register(NewsletterSubscription)
 dsm_admin_site.register(UserProfile)
 dsm_admin_site.register(Tag)
 dsm_admin_site.register(ArticleMedia)
+dsm_admin_site.register(BlogPost)
 
 @receiver(post_migrate)
 def create_groups(sender, **kwargs):
