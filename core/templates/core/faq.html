@@ -4,12 +4,16 @@
     <section class="max-w-4xl mx-auto px-4 sm:px-0">
         <h1 class="text-2xl sm:text-3xl font-bold mb-6 text-gray-900 dark:text-white">Frequently Asked Questions</h1>
         <div class="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg shadow-lg">
-            <h2 class="text-xl font-semibold mb-2 text-gray-900 dark:text-white">What is DSM Times?</h2>
-            <p class="text-gray-700 dark:text-gray-100">DSM Times is a premier news platform covering technology, science, and culture with in-depth analysis and breaking news.</p>
-            <h2 class="text-xl font-semibold mt-4 mb-2 text-gray-900 dark:text-white">How do I become an editor?</h2>
-            <p class="text-gray-700 dark:text-gray-100">Visit your profile page and submit an editor request. The Chief Editor will review and approve it with contract details if accepted.</p>
-            <h2 class="text-xl font-semibold mt-4 mb-2 text-gray-900 dark:text-white">How can I subscribe?</h2>
-            <p class="text-gray-700 dark:text-gray-100">Go to the subscription page, choose a plan, and submit it for approval by the Chief Editor.</p>
+            {% if faqs %}
+                {% for faq in faqs %}
+                    <div class="mb-6 last:mb-0">
+                        <h2 class="text-xl font-semibold mb-2 text-gray-900 dark:text-white">{{ faq.question }}</h2>
+                        <p class="text-gray-700 dark:text-gray-100">{{ faq.answer }}</p>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p class="text-gray-700 dark:text-gray-100">No FAQs available at this time.</p>
+            {% endif %}
         </div>
     </section>
 {% endblock %}

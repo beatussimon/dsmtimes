@@ -155,19 +155,54 @@
         {% endif %}
         {% block content %}{% endblock %}
     </main>
-    <footer class="bg-gray-800 text-gray-300 py-12">
-        <div class="container mx-auto px-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+    <footer class="bg-gray-800 text-gray-300 py-6">
+        <div class="container mx-auto px-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+            <!-- Categories Section -->
             {% for category in categories.all|slice:":4" %}
-
                 <div>
-                    <h3 class="text-xl font-bold mb-4">{{ category.name }}</h3>
-                    <ul class="space-y-2">
+                    <h3 class="text-base sm:text-lg font-semibold mb-2">{{ category.name }}</h3>
+                    <ul class="space-y-1 text-sm">
                         <li><a href="{% url 'category_detail' category.slug %}" class="hover:text-blue-400 transition">View Articles</a></li>
                     </ul>
                 </div>
             {% endfor %}
+    
+            <!-- Additional Section -->
+            <div class="mt-4 sm:mt-0 md:col-span-4 border-t border-gray-700 pt-4 grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <!-- About & Links -->
+                <div>
+                    <h3 class="text-base sm:text-lg font-semibold mb-2">About</h3>
+                    <ul class="space-y-1 text-sm">
+                        <li><a href="{% url 'faq' %}" class="hover:text-blue-400 transition">FAQ</a></li>
+                        <li><a href="{% url 'feedback' %}" class="hover:text-blue-400 transition">Feedback</a></li>
+                        
+                    </ul>
+                </div>
+    
+                <!-- Social Media -->
+                <div>
+                    <h3 class="text-base sm:text-lg font-semibold mb-2">Follow Us</h3>
+                    <div class="flex space-x-3">
+                        <a href="#" class="text-blue-400 hover:text-blue-500 transition"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-blue-600 hover:text-blue-700 transition"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="text-pink-500 hover:text-pink-600 transition"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+    
+                <!-- Newsletter -->
+                <div>
+                    <h3 class="text-base sm:text-lg font-semibold mb-2">Newsletter</h3>
+                    <form action="{% url 'subscribe' %}" method="post" class="flex flex-col space-y-2">
+                        {% csrf_token %}
+                        <input type="email" placeholder="Your email" class="w-full px-2 py-1 text-gray-900 text-sm rounded focus:outline-none focus:ring-1 focus:ring-blue-400">
+                        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-1 text-sm rounded transition">Subscribe</button>
+                    </form>
+                </div>
+            </div>
         </div>
-        <p class="text-center mt-8 text-gray-500">© 2025 DSM Times. All rights reserved.</p>
+    
+        <!-- Copyright -->
+        <p class="text-center mt-4 text-gray-500 text-xs">© 2025 DSM Times. All rights reserved.</p>
     </footer>
     <script src="{% static 'js/main.js' %}"></script>
     <script>

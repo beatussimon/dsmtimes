@@ -8,7 +8,7 @@ from django.contrib import messages
 from django.db.models import Q, Count
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import UserCreationForm
-from .models import Article, Category, SubscriptionPlan, Comment, NewsletterSubscription, UserProfile, Tag, ArticleMedia
+from .models import Article, Category, SubscriptionPlan, Comment, NewsletterSubscription, UserProfile, Tag, ArticleMedia,Feedback,FAQ
 from django import forms
 from django.core.paginator import Paginator
 import datetime
@@ -267,7 +267,8 @@ def category_detail(request, slug):
     return render(request, 'core/category_detail.html', {'category': category, 'page_obj': page_obj})
 
 def faq(request):
-    return render(request, 'core/faq.html')
+    faqs = FAQ.objects.all()  # Fetch all FAQs from the database
+    return render(request, 'core/faq.html', {'faqs': faqs})
 
 def feedback(request):
     if request.method == 'POST':
@@ -361,3 +362,21 @@ def custom_admin(request):
         'editor_requests': editor_requests,
         'category_form': category_form,
     })
+
+def feedback(request):
+    if request.method == 'POST':
+        message = request.POST.get('message')
+        user = request.user if request.user.is_authenticated else None
+        feedback_entry = Feedback(user=user, message=message)
+        feedback_entry.save()
+        # Optional: Keep the email notification if desired
+        send_mail(
+            'Feedback from DSM Times User',
+            f'Message: {message}\nFrom: {user.username if user else "Anonymous"}',
+            settings.EMAIL_HOST_USER,
+            [settings.EMAIL_HOST_USER],
+            fail_silently=True,  # Changed to True to avoid errors if email fails
+        )
+        messages.success(request, 'Feedback submitted successfully.')
+        return redirect('feedback')
+    return render(request, 'core/feedback.html')
