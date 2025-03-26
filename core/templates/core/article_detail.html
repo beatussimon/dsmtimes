@@ -39,7 +39,7 @@
                 </button>
             </form>
         </div>
-        <div class="prose dark:prose-invert max-w-none text-gray-800 dark:text-gray-100 mb-6 leading-relaxed">
+        <div class="prose dark:prose-invert max-w-none  dark:text-gray-100 mb-6 leading-relaxed">
             {{ article.content|safe }}
             {% for item in media %}
                 {% if item.media_type == 'image' and item.media_file %}
