@@ -8,12 +8,14 @@ from django.contrib import messages
 from django.db.models import Q, Count
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import UserCreationForm
+from .forms import CustomUserCreationForm
 from .models import Article, Category, SubscriptionPlan, Comment, NewsletterSubscription, UserProfile, Tag, ArticleMedia,Feedback,FAQ,BlogPost
 from django import forms
 from django.core.paginator import Paginator
 import datetime
 import random
 from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login
 
 class ProfileForm(forms.ModelForm):
     class Meta:
@@ -446,3 +448,17 @@ def blog_post_detail(request, slug):
     post.views_count += 1
     post.save(update_fields=['views_count'])
     return render(request, 'core/blog_post_detail.html', {'post': post})
+
+def register(request):
+    if request.method == "POST":
+        form = CustomUserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            messages.success(request, f"Account created for {user.username}! You’re now logged in.")
+            return redirect('home')  # Adjust to your home URL
+        else:
+            messages.error(request, "Please correct the errors below.")
+    else:
+        form = CustomUserCreationForm()
+    return render(request, 'registration/register.html', {'form': form})

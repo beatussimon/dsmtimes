@@ -1,25 +1,86 @@
 {% extends 'core/base.html' %}
 {% block title %}Login - DSM Times{% endblock %}
 {% block content %}
-    <div class="max-w-md mx-auto mt-12 p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg">
-        <h1 class="text-3xl font-bold mb-6 text-center">Login</h1>
-        {% if form.errors %}
-            <p class="text-red-600 mb-4">Your username or password didn’t match. Please try again.</p>
+    <div class="max-w-md mx-auto mt-12 px-6 py-8 bg-white dark:bg-gray-900 rounded-lg shadow-lg">
+
+
+        <!-- Messages (Success/Error) -->
+        {% if messages %}
+            <div class="mb-6 space-y-2">
+                {% for message in messages %}
+                    <div class="p-3 rounded {% if message.tags == 'error' %}bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-200{% else %}bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-200{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
         {% endif %}
-        <form method="post" class="space-y-4">
+
+        <!-- Form Errors -->
+        {% if form.errors %}
+            <div class="mb-6 p-3 bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-200 rounded">
+                {% if form.non_field_errors %}
+                    {{ form.non_field_errors|join:"<br>"|safe }}
+                {% else %}
+                    <p>Your username or password didn’t match. Please try again.</p>
+                {% endif %}
+            </div>
+        {% endif %}
+
+        <form method="post" class="space-y-6">
             {% csrf_token %}
+            <!-- Username Field -->
             <div>
-                <label for="{{ form.username.id_for_label }}" class="block text-gray-700 dark:text-gray-300">Username</label>
-                <input type="text" name="{{ form.username.html_name }}" id="{{ form.username.id_for_label }}" class="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100" required>
+                <label for="{{ form.username.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Username</label>
+                <input 
+                    type="text" 
+                    name="{{ form.username.html_name }}" 
+                    id="{{ form.username.id_for_label }}" 
+                    class="w-full p-3 border rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-150" 
+                    value="{{ form.username.value|default:'' }}"
+                    placeholder="Enter your username" 
+                    required 
+                    autofocus
+                >
+                {% if form.username.errors %}
+                    <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ form.username.errors|join:" " }}</p>
+                {% endif %}
             </div>
+
+            <!-- Password Field -->
             <div>
-                <label for="{{ form.password.id_for_label }}" class="block text-gray-700 dark:text-gray-300">Password</label>
-                <input type="password" name="{{ form.password.html_name }}" id="{{ form.password.id_for_label }}" class="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100" required>
+                <label for="{{ form.password.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Password</label>
+                <input 
+                    type="password" 
+                    name="{{ form.password.html_name }}" 
+                    id="{{ form.password.id_for_label }}" 
+                    class="w-full p-3 border rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-150" 
+                    placeholder="Enter your password" 
+                    required
+                >
+                {% if form.password.errors %}
+                    <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ form.password.errors|join:" " }}</p>
+                {% endif %}
             </div>
-            <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition duration-200">Login</button>
+
+            <!-- Submit Button -->
+            <button 
+                type="submit" 
+                class="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900 transition duration-200 font-semibold"
+            >
+                Login
+            </button>
         </form>
-        <p class="mt-4 text-center text-gray-600 dark:text-gray-400">
-            Don’t have an account? <a href="{% url 'register' %}" class="text-blue-600 hover:underline">Register</a>
-        </p>
+
+        <!-- Links -->
+        <div class="mt-6 text-center text-gray-600 dark:text-gray-400 space-y-2">
+            <p>
+                Don’t have an account? 
+                <a href="{% url 'register' %}" class="text-blue-600 hover:underline dark:text-blue-400">Register</a>
+            </p>
+            <p>
+                Forgot your password? 
+                <a href="{% url 'password_reset' %}" class="text-blue-600 hover:underline dark:text-blue-400">Reset it</a>
+            </p>
+        </div>
     </div>
 {% endblock %}

@@ -26,7 +26,7 @@ urlpatterns = [
     path('feedback/', views.feedback, name='feedback'),
     path('blog/', views.blog, name='blog'),
     path('blog/<slug:slug>/', views.blog_post_detail, name='blog_post_detail'),
-    path('custom-logout', views.custom_logout, name='custom_logout')
+    path('custom-logout', views.custom_logout, name='custom_logout'),
 ]
 
 if settings.DEBUG:

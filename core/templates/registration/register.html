@@ -1,12 +1,159 @@
 {% extends 'core/base.html' %}
 {% block title %}Register - DSM Times{% endblock %}
 {% block content %}
-    <section class="max-w-4xl mx-auto px-4 sm:px-0">
-        <h1 class="text-2xl sm:text-3xl font-bold mb-6 text-gray-900 dark:text-white">Register</h1>
-        <form method="post" class="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg shadow-lg">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit" class="bg-blue-600 text-white py-2 px-6 rounded hover:bg-blue-700 transition">Register</button>
-        </form>
-    </section>
+    <div class="min-h-screen flex flex-col justify-between bg-gray-50 dark:bg-gray-900">
+        <!-- Registration Form Section -->
+        <div class="flex-grow flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12">
+            <div class="w-full max-w-md bg-white dark:bg-gray-900 rounded-lg shadow-lg p-6 sm:p-8">
+                <h1 class="text-3xl font-bold mb-8 text-center text-gray-900 dark:text-white">Register for DSM Times</h1>
+
+                <!-- Messages -->
+                {% if messages %}
+                    <div class="mb-6 space-y-2">
+                        {% for message in messages %}
+                            <div class="p-3 rounded {% if message.tags == 'error' %}bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-200{% else %}bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-200{% endif %}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <!-- Form Errors -->
+                {% if form.errors %}
+                    <div class="mb-6 p-3 bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-200 rounded">
+                        {% if form.non_field_errors %}
+                            {{ form.non_field_errors|join:"<br>"|safe }}
+                        {% else %}
+                            <p>Please correct the errors below.</p>
+                        {% endif %}
+                    </div>
+                {% endif %}
+
+                <form method="post" class="space-y-6">
+                    {% csrf_token %}
+                    <!-- First Name -->
+                    <div>
+                        <label for="{{ form.first_name.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">First Name</label>
+                        <input 
+                            type="text" 
+                            name="{{ form.first_name.name }}" 
+                            id="{{ form.first_name.id_for_label }}" 
+                            class="w-full p-3 border rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-150" 
+                            value="{{ form.first_name.value|default:'' }}"
+                            placeholder="Enter your first name" 
+                            {% if form.first_name.field.required %}required{% endif %}
+                            autofocus
+                        >
+                        {% if form.first_name.errors %}
+                            <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ form.first_name.errors|join:" " }}</p>
+                        {% endif %}
+                    </div>
+
+                    <!-- Last Name -->
+                    <div>
+                        <label for="{{ form.last_name.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Last Name</label>
+                        <input 
+                            type="text" 
+                            name="{{ form.last_name.name }}" 
+                            id="{{ form.last_name.id_for_label }}" 
+                            class="w-full p-3 border rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-150" 
+                            value="{{ form.last_name.value|default:'' }}"
+                            placeholder="Enter your last name" 
+                            {% if form.last_name.field.required %}required{% endif %}
+                        >
+                        {% if form.last_name.errors %}
+                            <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ form.last_name.errors|join:" " }}</p>
+                        {% endif %}
+                    </div>
+
+                    <!-- Email -->
+                    <div>
+                        <label for="{{ form.email.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email</label>
+                        <input 
+                            type="email" 
+                            name="{{ form.email.name }}" 
+                            id="{{ form.email.id_for_label }}" 
+                            class="w-full p-3 border rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-150" 
+                            value="{{ form.email.value|default:'' }}"
+                            placeholder="Enter your email" 
+                            {% if form.email.field.required %}required{% endif %}
+                        >
+                        {% if form.email.errors %}
+                            <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ form.email.errors|join:" " }}</p>
+                        {% endif %}
+                    </div>
+
+                    <!-- Username -->
+                    <div>
+                        <label for="{{ form.username.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Username</label>
+                        <input 
+                            type="text" 
+                            name="{{ form.username.name }}" 
+                            id="{{ form.username.id_for_label }}" 
+                            class="w-full p-3 border rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-150" 
+                            value="{{ form.username.value|default:'' }}"
+                            placeholder="Choose a username" 
+                            required
+                        >
+                        {% if form.username.errors %}
+                            <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ form.username.errors|join:" " }}</p>
+                        {% endif %}
+                    </div>
+
+                    <!-- Password -->
+                    <div>
+                        <label for="{{ form.password1.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Password</label>
+                        <input 
+                            type="password" 
+                            name="{{ form.password1.name }}" 
+                            id="{{ form.password1.id_for_label }}" 
+                            class="w-full p-3 border rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-150" 
+                            placeholder="Create a password" 
+                            required
+                        >
+                        {% if form.password1.errors %}
+                            <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ form.password1.errors|join:" " }}</p>
+                        {% endif %}
+                    </div>
+
+                    <!-- Confirm Password -->
+                    <div>
+                        <label for="{{ form.password2.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Confirm Password</label>
+                        <input 
+                            type="password" 
+                            name="{{ form.password2.name }}" 
+                            id="{{ form.password2.id_for_label }}" 
+                            class="w-full p-3 border rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-150" 
+                            placeholder="Confirm your password" 
+                            required
+                        >
+                        {% if form.password2.errors %}
+                            <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ form.password2.errors|join:" " }}</p>
+                        {% endif %}
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button 
+                        type="submit" 
+                        class="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900 transition duration-200 font-semibold"
+                    >
+                        Register
+                    </button>
+                </form>
+
+                <!-- Link to Login -->
+                <div class="mt-6 text-center text-gray-600 dark:text-gray-400">
+                    <p>
+                        Already have an account? 
+                        <a href="{% url 'login' %}" class="text-blue-600 hover:underline dark:text-blue-400">Login</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer Placeholder (Visible on Scroll) -->
+        <footer class="bg-gray-100 dark:bg-gray-800 py-6 text-center text-gray-600 dark:text-gray-400">
+            <p>© 2025 DSM Times. All rights reserved.</p>
+        </footer>
+    </div>
 {% endblock %}
