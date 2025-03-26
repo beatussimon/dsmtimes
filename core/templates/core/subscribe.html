@@ -1,17 +1,24 @@
-{% extends 'core/base.html' %}
+{% extends 'base.html' %}
 {% block title %}Subscribe - DSM Times{% endblock %}
 {% block content %}
-    <h1 class="text-4xl font-bold mb-8">Choose Your Subscription Plan</h1>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {% for plan in plans %}
-            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg text-center hover:shadow-xl transition duration-300">
-                <h3 class="text-2xl font-semibold mb-2">{{ plan.name }}</h3>
-                <p class="text-3xl font-bold mb-2">${{ plan.price }}</p>
-                <p class="text-gray-600 dark:text-gray-400 mb-2">{{ plan.duration_days }} days</p>
-                <p class="text-gray-700 dark:text-gray-300 mb-4">{{ plan.description }}</p>
-                <a href="{{ plan.payment_url }}" target="_blank" class="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition duration-200">Pay Now</a>
-                <p class="mt-4 text-sm text-gray-500 dark:text-gray-400">After payment, contact support to activate your subscription.</p>
-            </div>
-        {% endfor %}
-    </div>
+    <section class="max-w-6xl mx-auto px-4 sm:px-0">
+        <h1 class="text-2xl sm:text-3xl font-bold mb-6 text-gray-900 dark:text-white">Subscribe to DSM Times</h1>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for plan in plans %}
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 sm:p-6 text-center">
+                    <h2 class="text-xl font-semibold text-gray-900 dark:text-white">{{ plan.name }}</h2>
+                    <p class="text-2xl font-bold mt-2 text-gray-900 dark:text-white">${{ plan.price }}</p>
+                    <p class="text-gray-600 dark:text-gray-300">{{ plan.duration_days }} days</p>
+                    <p class="mt-2 text-gray-700 dark:text-gray-100">{{ plan.description }}</p>
+                    <form method="post" class="mt-4">
+                        {% csrf_token %}
+                        <input type="hidden" name="plan" value="{{ plan.id }}">
+                        <button type="submit" class="bg-blue-600 text-white py-2 px-6 rounded hover:bg-blue-700 transition">Choose Plan</button>
+                    </form>
+                </div>
+            {% empty %}
+                <p class="text-gray-600 dark:text-gray-300 col-span-full">No subscription plans available.</p>
+            {% endfor %}
+        </div>
+    </section>
 {% endblock %}

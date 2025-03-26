@@ -1,42 +1,59 @@
-{% extends 'core/
-.base.html' %}
+{% extends 'base.html' %}
 {% block title %}Submit Article - DSM Times{% endblock %}
 {% block content %}
-    <h1 class="text-4xl font-bold mb-8">Submit an Article</h1>
-    <form method="post" enctype="multipart/form-data" class="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg">
-        {% csrf_token %}
-        <div class="mb-6">
-            <label for="title" class="block text-lg font-semibold mb-2">Title</label>
-            <input type="text" name="title" id="title" class="w-full p-3 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100" required>
-        </div>
-        <div class="mb-6">
-            <label for="category" class="block text-lg font-semibold mb-2">Category</label>
-            <select name="category" id="category" class="w-full p-3 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100" required>
-                {% for category in categories %}
-                    <option value="{{ category.id }}">{{ category.name }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <div class="mb-6">
-            <label for="summary" class="block text-lg font-semibold mb-2">Summary</label>
-            <textarea name="summary" id="summary" class="w-full p-3 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100" rows="3" required></textarea>
-        </div>
-        <div class="mb-6">
-            <label for="content" class="block text-lg font-semibold mb-2">Content</label>
-            <textarea name="content" id="content" class="w-full p-3 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100" rows="10" required></textarea>
-        </div>
-        <div class="mb-6">
-            <label for="featured_image" class="block text-lg font-semibold mb-2">Featured Image</label>
-            <input type="file" name="featured_image" id="featured_image" class="w-full p-3 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100">
-        </div>
-        <div class="mb-6">
-            <label for="tags" class="block text-lg font-semibold mb-2">Tags (comma-separated)</label>
-            <input type="text" name="tags" id="tags" class="w-full p-3 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100" placeholder="e.g., tech, AI, innovation">
-        </div>
-        <div class="mb-6">
-            <label for="is_premium" class="block text-lg font-semibold mb-2">Premium Content</label>
-            <input type="checkbox" name="is_premium" id="is_premium" class="p-2">
-        </div>
-        <button type="submit" class="bg-blue-600 text-white py-3 px-6 rounded hover:bg-blue-700 transition duration-200">Submit</button>
-    </form>
+    <section class="max-w-4xl mx-auto px-4 sm:px-0">
+        <h1 class="text-2xl sm:text-3xl font-bold mb-6 text-gray-900 dark:text-white">Submit an Article</h1>
+        <form method="post" enctype="multipart/form-data" class="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg shadow-lg">
+            {% csrf_token %}
+            <div class="mb-4">
+                <label for="title" class="block text-gray-700 dark:text-gray-100 font-semibold mb-2">Title</label>
+                <input type="text" name="title" id="title" class="w-full p-3 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 focus:ring-2 focus:ring-blue-500" required>
+            </div>
+            <div class="mb-4">
+                <label for="category" class="block text-gray-700 dark:text-gray-100 font-semibold mb-2">Category</label>
+                <select name="category" id="category" class="w-full p-3 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 focus:ring-2 focus:ring-blue-500" required>
+                    {% for cat in categories %}
+                        <option value="{{ cat.id }}">{{ cat.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="mb-4">
+                <label for="summary" class="block text-gray-700 dark:text-gray-100 font-semibold mb-2">Summary</label>
+                <textarea name="summary" id="summary" class="w-full p-3 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 focus:ring-2 focus:ring-blue-500" rows="3" maxlength="500" required></textarea>
+            </div>
+            <div class="mb-4">
+                <label for="content" class="block text-gray-700 dark:text-gray-100 font-semibold mb-2">Content</label>
+                <textarea name="content" id="content" class="w-full p-3 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 focus:ring-2 focus:ring-blue-500" rows="10" required></textarea>
+            </div>
+            <div class="mb-4">
+                <label for="featured_image" class="block text-gray-700 dark:text-gray-100 font-semibold mb-2">Featured Image</label>
+                <input type="file" name="featured_image" id="featured_image" class="w-full p-3 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100">
+            </div>
+            <div class="mb-4">
+                <label for="media_files" class="block text-gray-700 dark:text-gray-100 font-semibold mb-2">Additional Media</label>
+                <input type="file" name="media_files" id="media_files" class="w-full p-3 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100" multiple>
+            </div>
+            <div class="mb-4">
+                <label for="media_urls" class="block text-gray-700 dark:text-gray-100 font-semibold mb-2">Video URLs (one per line)</label>
+                <textarea name="media_urls" id="media_urls" class="w-full p-3 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 focus:ring-2 focus:ring-blue-500" rows="3"></textarea>
+            </div>
+            <div class="mb-4">
+                <label for="tags" class="block text-gray-700 dark:text-gray-100 font-semibold mb-2">Tags (comma-separated)</label>
+                <input type="text" name="tags" id="tags" class="w-full p-3 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 focus:ring-2 focus:ring-blue-500">
+            </div>
+            <div class="mb-4">
+                <label class="flex items-center text-gray-700 dark:text-gray-100">
+                    <input type="checkbox" name="is_premium" class="mr-2">
+                    Premium Content
+                </label>
+            </div>
+            <div class="mb-4">
+                <label class="flex items-center text-gray-700 dark:text-gray-100">
+                    <input type="checkbox" name="breaking_news" class="mr-2">
+                    Breaking News
+                </label>
+            </div>
+            <button type="submit" class="bg-blue-600 text-white py-2 px-6 rounded hover:bg-blue-700 transition">Submit Article</button>
+        </form>
+    </section>
 {% endblock %}

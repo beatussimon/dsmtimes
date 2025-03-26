@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+{% block title %}Chief Editor Dashboard - DSM Times{% endblock %}
+{% block content %}
+    <section class="max-w-6xl mx-auto px-4 sm:px-0">
+        <h1 class="text-2xl sm:text-3xl font-bold mb-6 text-gray-900 dark:text-white">Chief Editor Dashboard</h1>
+
+        <!-- Add Category -->
+        <div class="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg shadow-lg mb-6">
+            <h2 class="text-xl font-semibold mb-4 text-gray-900 dark:text-white">Add New Category</h2>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="add_category">
+                {{ category_form.as_p }}
+                <button type="submit" class="bg-blue-600 text-white py-2 px-6 rounded hover:bg-blue-700 transition">Add Category</button>
+            </form>
+        </div>
+
+        <!-- Pending Articles -->
+        <div class="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg shadow-lg mb-6">
+            <h2 class="text-xl font-semibold mb-4 text-gray-900 dark:text-white">Pending Articles</h2>
+            {% for article in pending_articles %}
+                <div class="border-b py-2 flex justify-between items-center">
+                    <span>{{ article.title }} by {{ article.author.username }}</span>
+                    <form method="post" class="inline">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="approve_article">
+                        <input type="hidden" name="article_id" value="{{ article.id }}">
+                        <button type="submit" class="text-green-600 hover:underline">Approve</button>
+                    </form>
+                </div>
+            {% empty %}
+                <p class="text-gray-600 dark:text-gray-300">No pending articles.</p>
+            {% endfor %}
+        </div>
+
+        <!-- Published Articles -->
+        <div class="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg shadow-lg mb-6">
+            <h2 class="text-xl font-semibold mb-4 text-gray-900 dark:text-white">Published Articles</h2>
+            {% for article in published_articles %}
+                <div class="border-b py-2 flex justify-between items-center">
+                    <span>{{ article.title }} by {{ article.author.username }}</span>
+                    <form method="post" class="inline">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="hide_article">
+                        <input type="hidden" name="article_id" value="{{ article.id }}">
+                        <button type="submit" class="text-red-600 hover:underline">Hide</button>
+                    </form>
+                </div>
+            {% empty %}
+                <p class="text-gray-600 dark:text-gray-300">No published articles.</p>
+            {% endfor %}
+        </div>
+
+        <!-- Editor Requests -->
+        <div class="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg shadow-lg mb-6">
+            <h2 class="text-xl font-semibold mb-4 text-gray-900 dark:text-white">Editor Requests</h2>
+            {% for profile in editor_requests %}
+                <div class="border-b py-2 flex justify-between items-center">
+                    <span>{{ profile.user.username }}</span>
+                    <form method="post" class="flex items-center space-x-2">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="promote_editor">
+                        <input type="hidden" name="user_id" value="{{ profile.user.id }}">
+                        <textarea name="contract_details" class="p-2 border rounded dark:bg-gray-700 dark:border-gray-600" placeholder="Contract details" rows="2"></textarea>
+                        <button type="submit" class="text-green-600 hover:underline">Approve</button>
+                    </form>
+                </div>
+            {% empty %}
+                <p class="text-gray-600 dark:text-gray-300">No editor requests.</p>
+            {% endfor %}
+        </div>
+
+        <!-- Current Editors -->
+        <div class="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg shadow-lg mb-6">
+            <h2 class="text-xl font-semibold mb-4 text-gray-900 dark:text-white">Current Editors</h2>
+            {% for editor in editors %}
+                <div class="border-b py-2 flex justify-between items-center">
+                    <span>{{ editor.user.username }} - {{ editor.contract_details|truncatewords:10 }}</span>
+                    <form method="post" class="inline">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="fire_editor">
+                        <input type="hidden" name="user_id" value="{{ editor.user.id }}">
+                        <button type="submit" class="text-red-600 hover:underline">Fire</button>
+                    </form>
+                </div>
+            {% empty %}
+                <p class="text-gray-600 dark:text-gray-300">No editors.</p>
+            {% endfor %}
+        </div>
+
+        <!-- Pending Subscriptions -->
+        <div class="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg shadow-lg">
+            <h2 class="text-xl font-semibold mb-4 text-gray-900 dark:text-white">Pending Subscriptions</h2>
+            {% for profile in pending_subscriptions %}
+                <div class="border-b py-2 flex justify-between items-center">
+                    <span>{{ profile.user.username }} - {{ profile.pending_subscription.name }}</span>
+                    <form method="post" class="inline">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="approve_subscription">
+                        <input type="hidden" name="user_id" value="{{ profile.user.id }}">
+                        <button type="submit" class="text-green-600 hover:underline">Approve</button>
+                    </form>
+                </div>
+            {% empty %}
+                <p class="text-gray-600 dark:text-gray-300">No pending subscriptions.</p>
+            {% endfor %}
+        </div>
+    </section>
+{% endblock %}

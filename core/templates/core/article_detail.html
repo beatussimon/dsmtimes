@@ -1,17 +1,22 @@
-{% extends 'core/base.html' %}
+{% extends 'base.html' %}
 {% block title %}{{ article.title }} - DSM Times{% endblock %}
 {% block content %}
-    <article class="bg-white dark:bg-gray-800 p-6 md:p-8 rounded-lg shadow-lg max-w-4xl mx-auto">
+    <article class="max-w-4xl mx-auto bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg shadow-lg">
         {% if article.featured_image %}
-            <img src="{{ article.featured_image.url }}" class="w-full h-64 md:h-96 object-cover rounded-lg mb-6" alt="{{ article.title }}">
+            <img src="{{ article.featured_image.url }}" class="w-full h-48 sm:h-64 md:h-96 object-cover rounded-lg mb-6" alt="{{ article.title }}">
         {% else %}
-            <div class="w-full h-64 md:h-96 bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-500 dark:text-gray-400 rounded-lg mb-6">
+            <div class="w-full h-48 sm:h-64 md:h-96 bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-500 dark:text-gray-400 rounded-lg mb-6">
                 No Image Available
             </div>
         {% endif %}
-        <div class="flex items-center justify-between mb-4">
-            <span class="text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wide">{{ article.category.name }}</span>
-            <div class="flex space-x-4">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4">
+            <span class="text-sm uppercase text-gray-500 dark:text-gray-400 {% if article.category.is_special %}special-category{% endif %}" data-color="{{ article.category.color }}">
+                {{ article.category.name }}
+                {% if article.category.is_special %}
+                    <span class="text-xs bg-red-500 text-white rounded-full px-1">!</span>
+                {% endif %}
+            </span>
+            <div class="flex space-x-4 mt-2 sm:mt-0">
                 <a href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri|urlencode }}&text={{ article.title|urlencode }}" target="_blank" class="text-blue-400 hover:text-blue-500">
                     <i class="fab fa-twitter text-xl"></i>
                 </a>
@@ -20,16 +25,40 @@
                 </a>
             </div>
         </div>
-        <h1 class="text-3xl md:text-4xl font-bold mb-4 text-gray-900 dark:text-white">{{ article.title }}</h1>
-        <p class="text-gray-600 dark:text-gray-400 mb-6">
-            By {{ article.author.username }} | {{ article.published_at|date:"F d, Y" }} | {{ article.views_count }} views | {{ article.read_time_minutes }} min read
-        </p>
-        <div class="prose dark:prose-invert max-w-none text-gray-800 dark:text-gray-200">{{ article.content|safe }}</div>
+        <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-gray-900 dark:text-white leading-tight">{{ article.title }}</h1>
+        <div class="flex items-center justify-between mb-6 text-sm text-gray-600 dark:text-gray-300">
+            <p>
+                By <a href="{% url 'public_profile' article.author.username %}" class="text-blue-600 hover:underline">{{ article.author.username }}</a> | {{ article.published_at|date:"F d, Y" }} | {{ article.views_count }} views | {{ article.read_time_minutes }} min read
+            </p>
+            <form method="post" class="flex items-center">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="like_article">
+                <button type="submit" class="flex items-center text-gray-600 dark:text-gray-300 hover:text-blue-600">
+                    <i class="fas fa-heart {% if user in article.likes.all %}text-red-500{% endif %}"></i>
+                    <span class="ml-1">{{ article.likes.count }}</span>
+                </button>
+            </form>
+        </div>
+        <div class="prose dark:prose-invert max-w-none text-gray-800 dark:text-gray-100 mb-6 leading-relaxed">
+            {{ article.content|safe }}
+            {% for item in media %}
+                {% if item.media_type == 'image' and item.media_file %}
+                    <figure class="my-6">
+                        <img src="{{ item.media_file.url }}" class="w-full h-auto rounded-lg" alt="Article media">
+                        <figcaption class="text-sm text-gray-500 dark:text-gray-400 mt-2">Additional image</figcaption>
+                    </figure>
+                {% elif item.media_type == 'video' and item.media_url %}
+                    <div class="my-6">
+                        <iframe src="{{ item.media_url }}" class="w-full h-48 sm:h-64 md:h-96 rounded-lg" frameborder="0" allowfullscreen></iframe>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
     </article>
 
     <!-- Tags -->
     {% if article.tags.all %}
-        <section class="max-w-4xl mx-auto mt-6">
+        <section class="max-w-4xl mx-auto mt-6 px-4 sm:px-0">
             <h2 class="text-xl font-semibold mb-3 text-gray-900 dark:text-white">Tags</h2>
             <div class="flex flex-wrap gap-2">
                 {% for tag in article.tags.all %}
@@ -41,35 +70,95 @@
         </section>
     {% endif %}
 
-    <!-- Comments -->
-    <section class="max-w-4xl mx-auto mt-12">
-        <h2 class="text-2xl font-semibold mb-6 text-gray-900 dark:text-white">Comments</h2>
-        {% for comment in comments %}
-            <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md mb-4">
-                <p class="text-gray-700 dark:text-gray-300">{{ comment.content }}</p>
-                <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">
-                    By {{ comment.user.username }} | {{ comment.created_at|date:"F d, Y H:i" }}
-                </p>
-            </div>
-        {% empty %}
-            <p class="text-gray-600 dark:text-gray-400">No comments yet. Be the first to comment!</p>
-        {% endfor %}
+    <!-- Comments Section -->
+    <section class="max-w-4xl mx-auto mt-12 px-4 sm:px-0">
+        <h2 class="text-2xl font-semibold mb-6 text-gray-900 dark:text-white">Comments ({{ article.comments.count }})</h2>
         {% if user.is_authenticated %}
-            <form method="post" class="mt-6">
+            <form method="post" class="mb-6" id="comment-form">
                 {% csrf_token %}
-                <textarea name="content" class="w-full p-3 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 focus:ring-2 focus:ring-blue-500" rows="4" placeholder="Add your comment..." required></textarea>
-                <button type="submit" class="mt-4 bg-blue-600 text-white py-2 px-6 rounded hover:bg-blue-700 transition">Submit Comment</button>
+                <input type="hidden" name="action" value="comment">
+                <input type="hidden" name="comment_id" id="comment-id">
+                <textarea name="content" id="comment-content" class="w-full p-3 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 focus:ring-2 focus:ring-blue-500" rows="4" placeholder="Add your comment..." required></textarea>
+                <button type="submit" class="mt-4 bg-blue-600 text-white py-2 px-6 rounded hover:bg-blue-700 transition" id="submit-btn">Post Comment</button>
             </form>
+            <script>
+                function editComment(id, content) {
+                    document.getElementById('comment-id').value = id;
+                    document.getElementById('comment-content').value = content;
+                    document.getElementById('submit-btn').textContent = 'Update Comment';
+                }
+            </script>
         {% else %}
-            <p class="text-gray-600 dark:text-gray-400 mt-4">
-                <a href="{% url 'login' %}" class="text-blue-600 hover:underline">Login</a> to add a comment.
+            <p class="text-gray-600 dark:text-gray-300 mb-6">
+                <a href="{% url 'login' %}" class="text-blue-600 hover:underline">Login</a> to comment.
             </p>
         {% endif %}
+        {% for comment in comments %}
+            <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md mb-4">
+                <p class="text-gray-700 dark:text-gray-100">{{ comment.content|safe }}</p>
+                <div class="flex items-center justify-between text-sm text-gray-500 dark:text-gray-300 mt-2">
+                    <p>
+                        By <a href="{% url 'public_profile' comment.user.username %}" class="text-blue-600 hover:underline">{{ comment.user.username }}</a> | {{ comment.created_at|date:"F d, Y H:i" }}
+                        {% if comment.updated_at != comment.created_at %} (Edited {{ comment.updated_at|date:"F d, Y H:i" }}){% endif %}
+                    </p>
+                    <div class="flex space-x-4">
+                        <form method="post" class="flex items-center">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="like">
+                            <input type="hidden" name="comment_id" value="{{ comment.id }}">
+                            <button type="submit" class="flex items-center text-gray-600 dark:text-gray-300 hover:text-blue-600">
+                                <i class="fas fa-thumbs-up {% if user in comment.likes.all %}text-blue-500{% endif %}"></i>
+                                <span class="ml-1">{{ comment.like_count }}</span>
+                            </button>
+                        </form>
+                        {% if user.is_authenticated %}
+                            <button onclick="document.getElementById('reply-form-{{ comment.id }}').classList.toggle('hidden')" class="text-blue-600 hover:underline">Reply</button>
+                        {% endif %}
+                        {% if user == comment.user %}
+                            <button onclick="editComment('{{ comment.id }}', '{{ comment.content|escapejs }}')" class="text-blue-600 hover:underline">Edit</button>
+                        {% endif %}
+                    </div>
+                </div>
+                <!-- Reply Form -->
+                {% if user.is_authenticated %}
+                    <form method="post" class="mt-4 hidden" id="reply-form-{{ comment.id }}">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="comment">
+                        <input type="hidden" name="parent_id" value="{{ comment.id }}">
+                        <textarea name="content" class="w-full p-3 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 focus:ring-2 focus:ring-blue-500" rows="3" placeholder="Reply to {{ comment.user.username }}..." required></textarea>
+                        <button type="submit" class="mt-2 bg-blue-600 text-white py-1 px-4 rounded hover:bg-blue-700 transition">Post Reply</button>
+                    </form>
+                {% endif %}
+                <!-- Replies -->
+                {% for reply in comment.replies.all %}
+                    <div class="ml-6 mt-4 bg-gray-50 dark:bg-gray-700 p-3 rounded-lg">
+                        <p class="text-gray-700 dark:text-gray-100">{{ reply.content|safe }}</p>
+                        <div class="flex items-center justify-between text-sm text-gray-500 dark:text-gray-300 mt-2">
+                            <p>
+                                By <a href="{% url 'public_profile' reply.user.username %}" class="text-blue-600 hover:underline">{{ reply.user.username }}</a> | {{ reply.created_at|date:"F d, Y H:i" }}
+                                {% if reply.updated_at != reply.created_at %} (Edited {{ reply.updated_at|date:"F d, Y H:i" }}){% endif %}
+                            </p>
+                            <form method="post" class="flex items-center">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="like">
+                                <input type="hidden" name="comment_id" value="{{ reply.id }}">
+                                <button type="submit" class="flex items-center text-gray-600 dark:text-gray-300 hover:text-blue-600">
+                                    <i class="fas fa-thumbs-up {% if user in reply.likes.all %}text-blue-500{% endif %}"></i>
+                                    <span class="ml-1">{{ reply.likes.count }}</span>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% empty %}
+            <p class="text-gray-600 dark:text-gray-300">No comments yet. Be the first!</p>
+        {% endfor %}
     </section>
 
     <!-- Related Articles -->
     {% if related_articles %}
-        <section class="max-w-4xl mx-auto mt-12">
+        <section class="max-w-4xl mx-auto mt-12 px-4 sm:px-0">
             <h2 class="text-2xl font-semibold mb-6 text-gray-900 dark:text-white">Related Stories</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 {% for related in related_articles %}
@@ -80,7 +169,12 @@
                             <div class="w-full h-40 bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-500 dark:text-gray-400">No Image</div>
                         {% endif %}
                         <div class="p-4">
-                            <span class="text-sm text-gray-500 dark:text-gray-400">{{ related.category.name }}</span>
+                            <span class="text-sm text-gray-500 dark:text-gray-400 {% if related.category.is_special %}special-category{% endif %}" data-color="{{ related.category.color }}">
+                                {{ related.category.name }}
+                                {% if related.category.is_special %}
+                                    <span class="text-xs bg-red-500 text-white rounded-full px-1">!</span>
+                                {% endif %}
+                            </span>
                             <h3 class="text-lg font-semibold mt-2 text-gray-900 dark:text-white">{{ related.title }}</h3>
                             <a href="{% url 'article_detail' related.slug %}" class="mt-2 inline-block text-blue-600 hover:underline">Read More</a>
                         </div>
@@ -89,4 +183,15 @@
             </div>
         </section>
     {% endif %}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.special-category').forEach(element => {
+                const color = element.getAttribute('data-color');
+                if (color) {
+                    element.style.color = color;
+                }
+            });
+        });
+    </script>
 {% endblock %}

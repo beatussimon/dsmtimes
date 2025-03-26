@@ -1,87 +1,190 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en" {% if request.session.dark_mode %}class="dark"{% endif %}>
+<html lang="en" class="{% if request.session.dark_mode %}dark{% endif %}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="DSM Times - Your premier source for technology, science, and culture news.">
-    <meta name="keywords" content="technology, science, culture, news, DSM Times">
+    <meta name="description" content="DSM Times - Breaking news, analysis, and insights on technology, science, and culture.">
     <title>{% block title %}DSM Times{% endblock %}</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="{% static 'css/custom.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Sacramento&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Lobster&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+    
+
 </head>
-<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans antialiased">
-    <header class="bg-gray-900 text-white shadow-lg sticky top-0 z-50">
-        <nav class="container mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center">
-            <div class="flex justify-between w-full sm:w-auto items-center">
-                <a href="{% url 'home' %}" class="text-3xl font-extrabold tracking-tight">DSM Times</a>
-                <button class="sm:hidden text-2xl focus:outline-none" onclick="document.getElementById('nav-menu').classList.toggle('hidden')">
-                    <i class="fas fa-bars"></i>
-                </button>
-            </div>
-            <div id="nav-menu" class="hidden sm:flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-6 mt-4 sm:mt-0 w-full sm:w-auto">
-                <a href="{% url 'home' %}" class="hover:text-blue-400 transition duration-200 text-lg">Home</a>
-                {% for category in categories %}
-                    <a href="{% url 'search' %}?q={{ category.name }}" class="hover:text-blue-400 transition duration-200 text-lg">{{ category.name }}</a>
-                {% endfor %}
-                <a href="{% url 'search' %}" class="hover:text-blue-400 transition duration-200"><i class="fas fa-search"></i></a>
-                {% if user.is_authenticated %}
-                    {% if user.userprofile.is_editor %}
-                        <a href="{% url 'submit_article' %}" class="hover:text-blue-400 transition duration-200">Submit</a>
-                        <a href="{% url 'profile' %}" class="hover:text-blue-400 transition duration-200">Profile</a>
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-serif antialiased">
+    <header class="bg-white dark:bg-gray-800 shadow-md sticky top-0 z-50">
+        <nav class="container mx-auto px-4 py-3">
+            <div class="flex flex-wrap justify-between items-center">
+                <!-- Left: Logo and Core Links -->
+                <div class="flex items-center space-x-2 sm:space-x-4">
+                    <a href="{% url 'home' %}" class="text-5xl lobster-regular font-semibold text-gray-900 dark:text-white mr-4 sm:mr-6 hover:text-blue-500 transition-colors duration-300 ease-in-out">
+                        DsmTimes
+                    </a>
+                    
+                    
+                                     
+                    <a href="{% url 'home' %}" class="hover:text-blue-600 transition hidden sm:inline"><i class="fas fa-home"></i><span class="ml-1">Home</span></a>
+                    <a href="{% url 'live_updates' %}" class="hover:text-blue-600 transition hidden sm:inline"><i class="fas fa-bolt"></i><span class="ml-1">Live</span></a>
+                    <a href="{% url 'blog' %}" class="hover:text-blue-600 transition hidden sm:inline"><i class="fas fa-blog"></i><span class="ml-1">Blog</span></a>
+                </div>
+                <!-- Right: Search, Profile, Logout, Theme, Hamburger -->
+                <div class="flex items-center space-x-2 sm:space-x-4">
+                    <a href="{% url 'search' %}" class="hover:text-blue-600 transition"><i class="fas fa-search"></i></a>
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'profile' %}" class="hover:text-blue-600 transition hidden sm:inline">
+                            <i class="fas fa-user"></i><span class="ml-1">{{ user.username }}{% if user.userprofile.is_editor %}{% if user.userprofile.is_chief_editor %} (Chief Editor){% else %} (Editor){% endif %}{% endif %}</span>
+                        </a>
+                        {% if user.userprofile.is_chief_editor %}
+                            <a href="{% url 'custom_admin' %}" class="hover:text-blue-600 transition hidden sm:inline"><i class="fas fa-crown"></i><span class="ml-1">Admin</span></a>
+                        {% endif %}
+                        <form method="post" action="{% url 'logout' %}" class="inline">
+                            {% csrf_token %}
+                            <button type="submit" class="hover:text-blue-600 transition hidden sm:inline"><i class="fas fa-sign-out-alt"></i><span class="ml-1">Logout</span></button>
+                        </form>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="hover:text-blue-600 transition hidden sm:inline"><i class="fas fa-sign-in-alt"></i><span class="ml-1">Login</span></a>
+                        <a href="{% url 'register' %}" class="hover:text-blue-600 transition hidden sm:inline"><i class="fas fa-user-plus"></i><span class="ml-1">Register</span></a>
                     {% endif %}
-                    <a href="{% url 'logout' %}" class="hover:text-blue-400 transition duration-200">Logout</a>
-                {% else %}
-                    <a href="{% url 'login' %}" class="hover:text-blue-400 transition duration-200">Login</a>
-                    <a href="{% url 'register' %}" class="hover:text-blue-400 transition duration-200">Register</a>
+                    <a href="{% url 'toggle_dark_mode' %}" class="hover:text-blue-600 transition">
+                        <i class="{% if request.session.dark_mode %}fas fa-sun{% else %}fas fa-moon{% endif %}"></i>
+                    </a>
+                    <button class="text-xl focus:outline-none sm:hidden" onclick="document.getElementById('nav-menu').classList.toggle('hidden')">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+            <!-- Desktop Categories and Extras -->
+            <div class="hidden sm:flex flex-col items-center mt-2">
+                <div class="flex space-x-4 flex-wrap justify-center">
+                    {% for category in categories|slice:":4" %}
+                        <a href="{% url 'category_detail' category.slug %}" class="hover:text-blue-600 transition relative {% if category.is_special %}special-category{% endif %}" data-color="{{ category.color }}">
+                            {{ category.name }}
+                            {% if category.is_special %}
+                                <span class="absolute -top-1 -right-2 text-xs bg-red-500 text-white rounded-full px-1">!</span>
+                            {% endif %}
+                        </a>
+                    {% endfor %}
+                    <a href="{% url 'faq' %}" class="hover:text-blue-600 transition">FAQ</a>
+                    <a href="{% url 'feedback' %}" class="hover:text-blue-600 transition">Feedback</a>
+                </div>
+                {% if categories|length > 4 %}
+                    <hr class="my-2 border-gray-300 dark:border-gray-600 category-line">
+                    <div class="flex space-x-4 items-center justify-center flex-wrap">
+                        {% for category in categories|slice:"4:" %}
+                            <a href="{% url 'category_detail' category.slug %}" class="hover:text-blue-600 transition {% if category.is_special %}special-category{% endif %}" data-color="{{ category.color }}">
+                                {{ category.name }}
+                                {% if category.is_special %}
+                                    <span class="text-xs bg-blue-500 text-white rounded-full px-1">!</span>
+                                {% endif %}
+                            </a>
+                        {% endfor %}
+                        <span class="text-gray-500 dark:text-gray-400 mx-2">|</span>
+                        <a href="#" class="text-blue-400 hover:text-blue-500"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-blue-600 hover:text-blue-700"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="text-pink-500 hover:text-pink-600"><i class="fab fa-instagram"></i></a>
+                        <span class="text-gray-500 dark:text-gray-400 mx-2">|</span>
+                        <span>{{ "now"|date:"H:i, F j, Y" }}</span>
+                        {% if special_event %}
+                            <span class="text-yellow-500">{{ special_event }}</span>
+                        {% endif %}
+                    </div>
                 {% endif %}
-                <a href="{% url 'toggle_dark_mode' %}" class="hover:text-blue-400 transition duration-200">
-                    {% if request.session.dark_mode %}<i class="fas fa-sun"></i>{% else %}<i class="fas fa-moon"></i>{% endif %}
-                </a>
+            </div>
+            <!-- Mobile Menu -->
+            <div id="nav-menu" class="hidden sm:hidden w-full mt-2 bg-white dark:bg-gray-800 p-4 shadow-md">
+                <div class="grid grid-cols-2 gap-4">
+                    {% for category in categories %}
+                        <a href="{% url 'category_detail' category.slug %}" class="hover:text-blue-600 transition {% if category.is_special %}special-category{% endif %}" data-color="{{ category.color }}">
+                            <i class="fas fa-folder mr-2"></i>{{ category.name }}
+                            {% if category.is_special %}
+                                <span class="text-xs bg-red-500 text-white rounded-full px-1">!</span>
+                            {% endif %}
+                        </a>
+                    {% endfor %}
+                </div>
+                <div class="mt-4 space-y-2">
+                    <a href="{% url 'faq' %}" class="block hover:text-blue-600 transition"><i class="fas fa-question-circle mr-2"></i>FAQ</a>
+                    <a href="{% url 'feedback' %}" class="block hover:text-blue-600 transition"><i class="fas fa-comment mr-2"></i>Feedback</a>
+                    <a href="{% url 'blog' %}" class="block hover:text-blue-600 transition"><i class="fas fa-blog mr-2"></i>Blog</a>
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'profile' %}" class="block hover:text-blue-600 transition"><i class="fas fa-user mr-2"></i>{{ user.username }}</a>
+                        {% if user.userprofile.is_chief_editor %}
+                            <a href="{% url 'custom_admin' %}" class="block hover:text-blue-600 transition"><i class="fas fa-crown mr-2"></i>Admin</a>
+                        {% endif %}
+                        <form method="post" action="{% url 'logout' %}" class="inline">
+                            {% csrf_token %}
+                            <button type="submit" class="block hover:text-blue-600 transition"><i class="fas fa-sign-out-alt mr-2"></i>Logout</button>
+                        </form>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="block hover:text-blue-600 transition"><i class="fas fa-sign-in-alt mr-2"></i>Login</a>
+                        <a href="{% url 'register' %}" class="block hover:text-blue-600 transition"><i class="fas fa-user-plus mr-2"></i>Register</a>
+                    {% endif %}
+                </div>
+                <div class="mt-4 flex space-x-4">
+                    <a href="#" class="text-blue-400 hover:text-blue-500"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="text-blue-600 hover:text-blue-700"><i class="fab fa-facebook"></i></a>
+                    <a href="#" class="text-pink-500 hover:text-pink-600"><i class="fab fa-instagram"></i></a>
+                </div>
+                <p class="mt-2 text-gray-500 dark:text-gray-400">{{ "now"|date:"H:i, F j, Y" }}{% if special_event %} | <span class="text-yellow-500">{{ special_event }}</span>{% endif %}</p>
             </div>
         </nav>
     </header>
-    <main class="container mx-auto px-4 py-8">
+    {% if breaking_news %}
+        <div class="bg-red-600 text-white py-2">
+            <div class="container mx-auto px-4 flex items-center flex-wrap">
+                <span class="font-bold mr-2">Breaking News:</span>
+                {% for article in breaking_news %}
+                    <a href="{% url 'article_detail' article.slug %}" class="hover:underline mr-2">{{ article.title }}</a>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+    <main class="container mx-auto px-4 py-6">
         {% if messages %}
             {% for message in messages %}
-                <div class="bg-{{ message.tags }}-100 dark:bg-{{ message.tags }}-800 border-l-4 border-{{ message.tags }}-500 text-{{ message.tags }}-700 dark:text-{{ message.tags }}-200 p-4 mb-6 rounded-lg">
-                    {{ message }}
+                <div class="flex items-center {% if message.tags == 'success' %}bg-green-100 border-green-500 text-green-700{% elif message.tags == 'error' %}bg-red-100 border-red-500 text-red-700{% elif message.tags == 'info' %}bg-blue-100 border-blue-500 text-blue-700{% endif %} border-l-4 p-4 mb-4 rounded">
+                    <i class="fas {% if message.tags == 'success' %}fa-check-circle{% elif message.tags == 'error' %}fa-exclamation-circle{% elif message.tags == 'info' %}fa-info-circle{% endif %} mr-2"></i>
+                    <span>{{ message }}</span>
                 </div>
             {% endfor %}
         {% endif %}
         {% block content %}{% endblock %}
     </main>
-    <footer class="bg-gray-900 text-white py-12">
-        <div class="container mx-auto px-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-            <div>
-                <h3 class="text-2xl font-bold mb-4">DSM Times</h3>
-                <p class="text-gray-400">Your premier source for cutting-edge news and insights.</p>
-            </div>
-            <div>
-                <h3 class="text-2xl font-bold mb-4">Quick Links</h3>
-                <ul class="space-y-3 text-gray-400">
-                    <li><a href="{% url 'home' %}" class="hover:text-blue-400 transition">Home</a></li>
-                    <li><a href="{% url 'subscribe' %}" class="hover:text-blue-400 transition">Subscribe</a></li>
-                    <li><a href="{% url 'profile' %}" class="hover:text-blue-400 transition">Profile</a></li>
-                </ul>
-            </div>
-            <div>
-                <h3 class="text-2xl font-bold mb-4">Newsletter</h3>
-                <form action="{% url 'newsletter_signup' %}" method="post" class="flex">
-                    {% csrf_token %}
-                    <input type="email" name="email" placeholder="Your email" class="p-2 rounded-l-md bg-gray-800 text-white border-none w-2/3 focus:ring-2 focus:ring-blue-500" required>
-                    <button type="submit" class="bg-blue-600 text-white p-2 rounded-r-md hover:bg-blue-700 transition">Subscribe</button>
-                </form>
-                <div class="mt-6 flex space-x-4 justify-center">
-                    <a href="#" class="text-gray-400 hover:text-blue-400 transition"><i class="fab fa-twitter text-xl"></i></a>
-                    <a href="#" class="text-gray-400 hover:text-blue-400 transition"><i class="fab fa-facebook text-xl"></i></a>
-                    <a href="#" class="text-gray-400 hover:text-blue-400 transition"><i class="fab fa-instagram text-xl"></i></a>
+    <footer class="bg-gray-800 text-gray-300 py-12">
+        <div class="container mx-auto px-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+            {% for category in categories.all|slice:":4" %}
+
+                <div>
+                    <h3 class="text-xl font-bold mb-4">{{ category.name }}</h3>
+                    <ul class="space-y-2">
+                        <li><a href="{% url 'category_detail' category.slug %}" class="hover:text-blue-400 transition">View Articles</a></li>
+                    </ul>
                 </div>
-            </div>
+            {% endfor %}
         </div>
-        <p class="text-center mt-8 text-gray-400">© 2025 DSM Times. All rights reserved.</p>
+        <p class="text-center mt-8 text-gray-500">© 2025 DSM Times. All rights reserved.</p>
     </footer>
     <script src="{% static 'js/main.js' %}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const secondRow = document.querySelector('.flex.items-center');
+            if (secondRow) {
+                const width = secondRow.offsetWidth;
+                document.querySelector('.category-line').style.width = `${width}px`;
+            }
+            // Apply special category colors
+            document.querySelectorAll('.special-category').forEach(element => {
+                const color = element.getAttribute('data-color');
+                if (color) {
+                    element.style.color = color;
+                }
+            });
+        });
+    </script>
 </body>
 </html>
