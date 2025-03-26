@@ -51,6 +51,89 @@
             {% endfor %}
         </div>
 
+        <!-- Hidden Articles -->
+        <div class="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg shadow-lg mb-6">
+            <h2 class="text-xl font-semibold mb-4 text-gray-900 dark:text-white">Hidden Articles</h2>
+            {% for article in hidden_articles %}
+                <div class="border-b py-2 flex justify-between items-center">
+                    <span>{{ article.title }} by {{ article.author.username }}</span>
+                    <form method="post" class="inline">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="unhide_article">
+                        <input type="hidden" name="article_id" value="{{ article.id }}">
+                        <button type="submit" class="text-green-600 hover:underline">Unhide</button>
+                    </form>
+                </div>
+            {% empty %}
+                <p class="text-gray-600 dark:text-gray-300">No hidden articles.</p>
+            {% endfor %}
+        </div>
+
+        <!-- FAQs Management -->
+        <div class="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg shadow-lg mb-6">
+            <h2 class="text-xl font-semibold mb-4 text-gray-900 dark:text-white">Manage FAQs</h2>
+            <!-- Add FAQ -->
+            <form method="post" class="mb-4">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="add_faq">
+                <div class="flex flex-col space-y-2">
+                    <input type="text" name="question" placeholder="Question" class="p-2 border rounded dark:bg-gray-700 dark:border-gray-600" required>
+                    <textarea name="answer" placeholder="Answer" class="p-2 border rounded dark:bg-gray-700 dark:border-gray-600" rows="3" required></textarea>
+                    <input type="number" name="order" placeholder="Order" class="p-2 border rounded dark:bg-gray-700 dark:border-gray-600" value="0">
+                    <button type="submit" class="bg-blue-600 text-white py-2 px-6 rounded hover:bg-blue-700 transition">Add FAQ</button>
+                </div>
+            </form>
+            <!-- Existing FAQs -->
+            {% for faq in faqs %}
+                <form method="post" class="border-b py-2">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="edit_faq">
+                    <input type="hidden" name="faq_id" value="{{ faq.id }}">
+                    <div class="flex flex-col space-y-2">
+                        <input type="text" name="question" value="{{ faq.question }}" class="p-2 border rounded dark:bg-gray-700 dark:border-gray-600" required>
+                        <textarea name="answer" class="p-2 border rounded dark:bg-gray-700 dark:border-gray-600" rows="3" required>{{ faq.answer }}</textarea>
+                        <input type="number" name="order" value="{{ faq.order }}" class="p-2 border rounded dark:bg-gray-700 dark:border-gray-600">
+                        <div class="flex space-x-2">
+                            <button type="submit" class="text-blue-600 hover:underline">Update</button>
+                            <button type="submit" formaction="{% url 'custom_admin' %}" name="action" value="delete_faq" class="text-red-600 hover:underline">Delete</button>
+                        </div>
+                    </div>
+                </form>
+            {% empty %}
+                <p class="text-gray-600 dark:text-gray-300">No FAQs available.</p>
+            {% endfor %}
+        </div>
+
+        <!-- Feedback Management -->
+        <div class="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg shadow-lg mb-6">
+            <h2 class="text-xl font-semibold mb-4 text-gray-900 dark:text-white">Manage Feedback</h2>
+            {% for feedback in feedbacks %}
+                <div class="border-b py-2">
+                    <p class="text-gray-700 dark:text-gray-100">{{ feedback.message }}</p>
+                    <p class="text-sm text-gray-500 dark:text-gray-300">
+                        From: {{ feedback.user.username|default:"Anonymous" }} | {{ feedback.submitted_at|date:"F d, Y" }}
+                        {% if feedback.is_resolved %} | Resolved {% endif %}
+                        {% if feedback.is_hidden %} | Hidden {% endif %}
+                    </p>
+                    <form method="post" class="mt-2 flex flex-col space-y-2">
+                        {% csrf_token %}
+                        <input type="hidden" name="feedback_id" value="{{ feedback.id }}">
+                        <textarea name="response" class="p-2 border rounded dark:bg-gray-700 dark:border-gray-600" placeholder="Response">{{ feedback.response }}</textarea>
+                        <div class="flex space-x-2">
+                            <button type="submit" name="action" value="respond_feedback" class="text-blue-600 hover:underline">Respond</button>
+                            {% if feedback.is_hidden %}
+                                <button type="submit" name="action" value="unhide_feedback" class="text-green-600 hover:underline">Unhide</button>
+                            {% else %}
+                                <button type="submit" name="action" value="hide_feedback" class="text-red-600 hover:underline">Hide</button>
+                            {% endif %}
+                        </div>
+                    </form>
+                </div>
+            {% empty %}
+                <p class="text-gray-600 dark:text-gray-300">No feedback available.</p>
+            {% endfor %}
+        </div>
+
         <!-- Editor Requests -->
         <div class="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg shadow-lg mb-6">
             <h2 class="text-xl font-semibold mb-4 text-gray-900 dark:text-white">Editor Requests</h2>

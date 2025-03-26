@@ -296,7 +296,7 @@ def custom_admin(request):
     if not hasattr(request.user, 'userprofile') or not request.user.userprofile.is_chief_editor:
         messages.error(request, 'Only the Chief Editor can access this page.')
         return redirect('home')
-    
+
     if request.method == 'POST':
         action = request.POST.get('action')
         if action == 'approve_article':
@@ -312,6 +312,50 @@ def custom_admin(request):
             article.status = 'hidden'
             article.save()
             messages.success(request, f'Article "{article.title}" hidden.')
+        elif action == 'unhide_article':
+            article_id = request.POST.get('article_id')
+            article = get_object_or_404(Article, id=article_id, status='hidden')
+            article.status = 'published'
+            article.save()
+            messages.success(request, f'Article "{article.title}" unhidden.')
+        elif action == 'edit_faq':
+            faq_id = request.POST.get('faq_id')
+            faq = get_object_or_404(FAQ, id=faq_id)
+            faq.question = request.POST.get('question')
+            faq.answer = request.POST.get('answer')
+            faq.order = request.POST.get('order', 0)
+            faq.save()
+            messages.success(request, 'FAQ updated successfully.')
+        elif action == 'add_faq':
+            question = request.POST.get('question')
+            answer = request.POST.get('answer')
+            order = request.POST.get('order', 0)
+            FAQ.objects.create(question=question, answer=answer, order=order)
+            messages.success(request, 'FAQ added successfully.')
+        elif action == 'delete_faq':
+            faq_id = request.POST.get('faq_id')
+            FAQ.objects.filter(id=faq_id).delete()
+            messages.success(request, 'FAQ deleted successfully.')
+        elif action == 'hide_feedback':
+            feedback_id = request.POST.get('feedback_id')
+            feedback = get_object_or_404(Feedback, id=feedback_id)
+            feedback.is_hidden = True
+            feedback.save()
+            messages.success(request, 'Feedback hidden.')
+        elif action == 'unhide_feedback':
+            feedback_id = request.POST.get('feedback_id')
+            feedback = get_object_or_404(Feedback, id=feedback_id)
+            feedback.is_hidden = False
+            feedback.save()
+            messages.success(request, 'Feedback unhidden.')
+        elif action == 'respond_feedback':
+            feedback_id = request.POST.get('feedback_id')
+            feedback = get_object_or_404(Feedback, id=feedback_id)
+            feedback.response = request.POST.get('response')
+            feedback.is_resolved = True
+            feedback.save()
+            messages.success(request, 'Feedback responded to.')
+        # Existing actions (approve_subscription, promote_editor, etc.) remain unchanged
         elif action == 'approve_subscription':
             user_id = request.POST.get('user_id')
             user = get_object_or_404(User, id=user_id)
@@ -347,20 +391,28 @@ def custom_admin(request):
             else:
                 messages.error(request, 'Error adding category.')
         return redirect('custom_admin')
-    
+
+    # Data for template
     pending_articles = Article.objects.filter(status='pending')
     published_articles = Article.objects.filter(status='published')
+    hidden_articles = Article.objects.filter(status='hidden')
     pending_subscriptions = UserProfile.objects.filter(pending_subscription__isnull=False)
     editors = UserProfile.objects.filter(is_editor=True, is_chief_editor=False)
     editor_requests = UserProfile.objects.filter(editor_request=True, is_editor=False)
     category_form = CategoryForm()
+    faqs = FAQ.objects.all()
+    feedbacks = Feedback.objects.all()
+
     return render(request, 'core/custom_admin.html', {
         'pending_articles': pending_articles,
         'published_articles': published_articles,
+        'hidden_articles': hidden_articles,
         'pending_subscriptions': pending_subscriptions,
         'editors': editors,
         'editor_requests': editor_requests,
         'category_form': category_form,
+        'faqs': faqs,
+        'feedbacks': feedbacks,
     })
 
 def feedback(request):
