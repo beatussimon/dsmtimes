@@ -1,5 +1,6 @@
 from pathlib import Path
 from decouple import config
+import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -72,8 +73,11 @@ USE_L10N = True
 USE_TZ = True
 
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [BASE_DIR / "static"]
-STATIC_ROOT = BASE_DIR / "staticfiles"
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),  # Your local static files directory
+]
+# If you're in production, make sure to have:
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / "media"
 
