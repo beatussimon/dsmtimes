@@ -71,12 +71,12 @@ LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_L10N = True
-USE_UZ = True  # Note: You had USE_TZ here, assuming this was a typo
+USE_TZ = True  # Note: You had USE_TZ here, assuming this was a typo
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']  # Where your static files (e.g., css/, js/) live
 STATIC_ROOT = BASE_DIR / 'staticfiles'   # Where collected files go
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'  # Add this for WhiteNoise
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
