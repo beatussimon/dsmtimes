@@ -21,36 +21,36 @@
             <!-- Top Navbar: Logo Centered, Left/Right Items -->
             <div class="flex items-center justify-between">
                 <!-- Left: Core Links (Desktop) -->
-                <div class="hidden sm:flex items-center space-x-3 bg-gray-100 dark:bg-gray-700 rounded-md px-2 py-1">
-                    <a href="{% url 'home' %}" class="hover:text-blue-600 transition"><i class="fas fa-home mr-1"></i>Home</a>
-                    <a href="{% url 'live_updates' %}" class="hover:text-blue-600 transition"><i class="fas fa-bolt mr-1"></i>Live</a>
-                    <a href="{% url 'blog' %}" class="hover:text-blue-600 transition"><i class="fas fa-blog mr-1"></i>Blog</a>
+                <div class="hidden sm:flex items-center space-x-3 bg-gray-100 dark:bg-gray-600 rounded-md px-2 py-1">
+                    <a href="{% url 'home' %}" class="hover:text-blue-400 dark:hover:text-blue-300 transition"><i class="fas fa-home mr-1"></i>Home</a>
+                    <a href="{% url 'live_updates' %}" class="hover:text-blue-400 dark:hover:text-blue-300 transition"><i class="fas fa-bolt mr-1"></i>Live</a>
+                    <a href="{% url 'blog' %}" class="hover:text-blue-400 dark:hover:text-blue-300 transition"><i class="fas fa-blog mr-1"></i>Blog</a>
                 </div>
                 <!-- Center: Enhanced Logo -->
                 <div class="flex-1 flex justify-center">
-                    <a href="{% url 'home' %}" class="relative text-4xl sm:text-5xl lobster-regular font-semibold text-gray-900 dark:text-white hover:text-blue-500 transition-colors duration-300 ease-in-out bg-gray-100 dark:bg-gray-700 rounded-full px-4 py-1 shadow-sm">
+                    <a href="{% url 'home' %}" class="relative text-4xl sm:text-5xl lobster-regular font-semibold text-gray-900 dark:text-white hover:text-blue-500 dark:hover:text-blue-300 transition-colors duration-300 ease-in-out bg-gray-100 dark:bg-gray-600 rounded-full px-4 py-1 shadow-sm">
                         DsmTimes
                         <span class="absolute -top-2 -right-2 text-xs bg-red-500 text-white rounded-full px-1 animate-pulse">📰</span>
-                        <span class="block text-xs text-center text-gray-500 dark:text-gray-400 mt-1">Your Daily Scoop</span>
+                        <span class="block text-xs text-center text-gray-500 dark:text-gray-300 mt-1">Your Daily Scoop</span>
                     </a>
                 </div>
                 <!-- Right: User Actions, Search, Theme, Hamburger -->
-                <div class="flex items-center space-x-2 sm:space-x-3 bg-gray-100 dark:bg-gray-700 rounded-md px-2 py-1">
-                    <a href="{% url 'search' %}" class="hover:text-blue-600 transition"><i class="fas fa-search"></i></a>
+                <div class="flex items-center space-x-2 sm:space-x-3 bg-gray-100 dark:bg-gray-600 rounded-md px-2 py-1">
+                    <a href="{% url 'search' %}" class="hover:text-blue-400 dark:hover:text-blue-300 transition"><i class="fas fa-search"></i></a>
                     {% if user.is_authenticated %}
-                        <a href="{% url 'profile' %}" class="hover:text-blue-600 transition hidden sm:flex items-center text-sm"><i class="fas fa-user mr-1"></i>{{ user.username|truncatechars:10 }}{% if user.userprofile.is_editor %}{% if user.userprofile.is_chief_editor %} (Chief){% else %} (Ed){% endif %}{% endif %}</a>
+                        <a href="{% url 'profile' %}" class="hover:text-blue-400 dark:hover:text-blue-300 transition hidden sm:flex items-center text-sm"><i class="fas fa-user mr-1"></i>{{ user.username|truncatechars:10 }}{% if user.userprofile.is_editor %}{% if user.userprofile.is_chief_editor %} (Chief){% else %} (Ed){% endif %}{% endif %}</a>
                         {% if user.userprofile.is_chief_editor %}
-                            <a href="{% url 'custom_admin' %}" class="hover:text-blue-600 transition hidden sm:flex items-center"><i class="fas fa-crown mr-1"></i>Admin</a>
+                            <a href="{% url 'custom_admin' %}" class="hover:text-blue-400 dark:hover:text-blue-300 transition hidden sm:flex items-center"><i class="fas fa-crown mr-1"></i>Admin</a>
                         {% endif %}
                         <form method="post" action="{% url 'logout' %}" class="inline hidden sm:block">
                             {% csrf_token %}
-                            <button type="submit" class="hover:text-blue-600 transition flex items-center"><i class="fas fa-sign-out-alt mr-1"></i>Logout</button>
+                            <button type="submit" class="hover:text-blue-400 dark:hover:text-blue-300 transition flex items-center"><i class="fas fa-sign-out-alt mr-1"></i>Logout</button>
                         </form>
                     {% else %}
-                        <a href="{% url 'login' %}" class="hover:text-blue-600 transition hidden sm:flex items-center"><i class="fas fa-sign-in-alt mr-1"></i>Login</a>
-                        <a href="{% url 'register' %}" class="hover:text-blue-600 transition hidden sm:flex items-center"><i class="fas fa-user-plus mr-1"></i>Register</a>
+                        <a href="{% url 'login' %}" class="hover:text-blue-400 dark:hover:text-blue-300 transition hidden sm:flex items-center"><i class="fas fa-sign-in-alt mr-1"></i>Login</a>
+                        <a href="{% url 'register' %}" class="hover:text-blue-400 dark:hover:text-blue-300 transition hidden sm:flex items-center"><i class="fas fa-user-plus mr-1"></i>Register</a>
                     {% endif %}
-                    <a href="{% url 'toggle_dark_mode' %}" class="hover:text-blue-600 transition">
+                    <a href="{% url 'toggle_dark_mode' %}" class="hover:text-blue-400 dark:hover:text-blue-300 transition">
                         <i class="{% if request.session.dark_mode %}fas fa-sun{% else %}fas fa-moon{% endif %}"></i>
                     </a>
                     <button class="text-xl focus:outline-none sm:hidden" onclick="document.getElementById('nav-menu').classList.toggle('hidden')">
@@ -61,28 +61,28 @@
 
             <!-- Desktop Secondary Nav: Categories and Extras -->
             <div class="hidden sm:flex justify-center mt-3">
-                <div class="bg-gray-100 dark:bg-gray-700 rounded-md px-3 py-2 flex flex-wrap items-center space-x-3 text-sm">
+                <div class="bg-gray-100 dark:bg-gray-600 rounded-md px-3 py-2 flex flex-wrap items-center space-x-3 text-sm">
                     {% for category in categories %}
-                        <a href="{% url 'category_detail' category.slug %}" class="hover:text-blue-600 transition relative {% if category.is_special %}special-category{% endif %}" data-color="{{ category.color }}">
+                        <a href="{% url 'category_detail' category.slug %}" class="hover:text-blue-400 dark:hover:text-blue-300 transition relative {% if category.is_special %}special-category{% endif %}" data-color="{{ category.color }}">
                             {{ category.name }}
                             {% if category.is_special %}
                                 <span class="absolute -top-1 -right-2 text-xs bg-red-500 text-white rounded-full px-1">!</span>
                             {% endif %}
                         </a>
                     {% endfor %}
-                    <span class="text-gray-400 dark:text-gray-500 mx-1">|</span>
-                    <a href="{% url 'faq' %}" class="hover:text-blue-600 transition">FAQ</a>
-                    <a href="{% url 'feedback' %}" class="hover:text-blue-600 transition">Feedback</a>
-                    <span class="text-gray-400 dark:text-gray-500 mx-1">|</span>
+                    <span class="text-gray-400 dark:text-gray-300 mx-1">|</span>
+                    <a href="{% url 'faq' %}" class="hover:text-blue-400 dark:hover:text-blue-300 transition">FAQ</a>
+                    <a href="{% url 'feedback' %}" class="hover:text-blue-400 dark:hover:text-blue-300 transition">Feedback</a>
+                    <span class="text-gray-400 dark:text-gray-300 mx-1">|</span>
                     <div class="flex space-x-2">
-                        <a href="#" class="text-blue-400 hover:text-blue-500"><i class="fab fa-twitter"></i></a>
-                        <a href="#" class="text-blue-600 hover:text-blue-700"><i class="fab fa-facebook"></i></a>
-                        <a href="#" class="text-pink-500 hover:text-pink-600"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-blue-400 hover:text-blue-300"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-blue-600 hover:text-blue-300"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="text-pink-500 hover:text-pink-300"><i class="fab fa-instagram"></i></a>
                     </div>
-                    <span class="text-gray-400 dark:text-gray-500 mx-1">|</span>
-                    <span><i class="fas fa-clock mr-1 text-gray-400 dark:text-gray-500"></i>{{ "now"|date:"H:i, F j, Y" }}</span>
+                    <span class="text-gray-400 dark:text-gray-300 mx-1">|</span>
+                    <span><i class="fas fa-clock mr-1 text-gray-400 dark:text-gray-300"></i>{{ "now"|date:"H:i, F j, Y" }}</span>
                     {% if special_event %}
-                        <span class="text-yellow-500 ml-2">{{ special_event }}</span>
+                        <span class="text-yellow-500 dark:text-yellow-400 ml-2">{{ special_event }}</span>
                     {% endif %}
                 </div>
             </div>
@@ -92,11 +92,11 @@
                 <div class="grid grid-cols-2 gap-2">
                     <!-- Left Column: Core Navigation -->
                     <div>
-                        <a href="{% url 'home' %}" class="block hover:text-blue-600 transition py-1"><i class="fas fa-home mr-1"></i>Home</a>
-                        <a href="{% url 'live_updates' %}" class="block hover:text-blue-600 transition py-1"><i class="fas fa-bolt mr-1"></i>Live</a>
-                        <a href="{% url 'blog' %}" class="block hover:text-blue-600 transition py-1"><i class="fas fa-blog mr-1"></i>Blog</a>
+                        <a href="{% url 'home' %}" class="block hover:text-blue-400 dark:hover:text-blue-300 transition py-1"><i class="fas fa-home mr-1"></i>Home</a>
+                        <a href="{% url 'live_updates' %}" class="block hover:text-blue-400 dark:hover:text-blue-300 transition py-1"><i class="fas fa-bolt mr-1"></i>Live</a>
+                        <a href="{% url 'blog' %}" class="block hover:text-blue-400 dark:hover:text-blue-300 transition py-1"><i class="fas fa-blog mr-1"></i>Blog</a>
                         {% for category in categories|slice:":3" %}
-                            <a href="{% url 'category_detail' category.slug %}" class="block hover:text-blue-600 transition py-1 {% if category.is_special %}special-category{% endif %}" data-color="{{ category.color }}">
+                            <a href="{% url 'category_detail' category.slug %}" class="block hover:text-blue-400 dark:hover:text-blue-300 transition py-1 {% if category.is_special %}special-category{% endif %}" data-color="{{ category.color }}">
                                 <i class="fas fa-folder mr-1"></i>{{ category.name|truncatechars:10 }}
                                 {% if category.is_special %}<span class="text-xs bg-red-500 text-white rounded-full px-1">!</span>{% endif %}
                             </a>
@@ -105,7 +105,7 @@
                     <!-- Right Column: Categories Continuation -->
                     <div>
                         {% for category in categories|slice:"3:" %}
-                            <a href="{% url 'category_detail' category.slug %}" class="block hover:text-blue-600 transition py-1 {% if category.is_special %}special-category{% endif %}" data-color="{{ category.color }}">
+                            <a href="{% url 'category_detail' category.slug %}" class="block hover:text-blue-400 dark:hover:text-blue-300 transition py-1 {% if category.is_special %}special-category{% endif %}" data-color="{{ category.color }}">
                                 <i class="fas fa-folder mr-1"></i>{{ category.name|truncatechars:10 }}
                                 {% if category.is_special %}<span class="text-xs bg-red-500 text-white rounded-full px-1">!</span>{% endif %}
                             </a>
@@ -113,39 +113,39 @@
                     </div>
                 </div>
                 <!-- Separator -->
-                <hr class="my-2 border-gray-200 dark:border-gray-600">
+                <hr class="my-2 border-gray-200 dark:border-gray-500">
                 <!-- User Actions -->
                 <div class="grid grid-cols-2 gap-2">
                     <div>
-                        <a href="{% url 'faq' %}" class="block hover:text-blue-600 transition py-1"><i class="fas fa-question-circle mr-1"></i>FAQ</a>
-                        <a href="{% url 'feedback' %}" class="block hover:text-blue-600 transition py-1"><i class="fas fa-comment mr-1"></i>Feedback</a>
+                        <a href="{% url 'faq' %}" class="block hover:text-blue-400 dark:hover:text-blue-300 transition py-1"><i class="fas fa-question-circle mr-1"></i>FAQ</a>
+                        <a href="{% url 'feedback' %}" class="block hover:text-blue-400 dark:hover:text-blue-300 transition py-1"><i class="fas fa-comment mr-1"></i>Feedback</a>
                     </div>
                     <div>
                         {% if user.is_authenticated %}
-                            <a href="{% url 'profile' %}" class="block hover:text-blue-600 transition py-1"><i class="fas fa-user mr-1"></i>{{ user.username|truncatechars:10 }}</a>
+                            <a href="{% url 'profile' %}" class="block hover:text-blue-400 dark:hover:text-blue-300 transition py-1"><i class="fas fa-user mr-1"></i>{{ user.username|truncatechars:10 }}</a>
                             {% if user.userprofile.is_chief_editor %}
-                                <a href="{% url 'custom_admin' %}" class="block hover:text-blue-600 transition py-1"><i class="fas fa-crown mr-1"></i>Admin</a>
+                                <a href="{% url 'custom_admin' %}" class="block hover:text-blue-400 dark:hover:text-blue-300 transition py-1"><i class="fas fa-crown mr-1"></i>Admin</a>
                             {% endif %}
                             <form method="post" action="{% url 'logout' %}" class="inline">
                                 {% csrf_token %}
-                                <button type="submit" class="block hover:text-blue-600 transition py-1"><i class="fas fa-sign-out-alt mr-1"></i>Logout</button>
+                                <button type="submit" class="block hover:text-blue-400 dark:hover:text-blue-300 transition py-1"><i class="fas fa-sign-out-alt mr-1"></i>Logout</button>
                             </form>
                         {% else %}
-                            <a href="{% url 'login' %}" class="block hover:text-blue-600 transition py-1"><i class="fas fa-sign-in-alt mr-1"></i>Login</a>
-                            <a href="{% url 'register' %}" class="block hover:text-blue-600 transition py-1"><i class="fas fa-user-plus mr-1"></i>Register</a>
+                            <a href="{% url 'login' %}" class="block hover:text-blue-400 dark:hover:text-blue-300 transition py-1"><i class="fas fa-sign-in-alt mr-1"></i>Login</a>
+                            <a href="{% url 'register' %}" class="block hover:text-blue-400 dark:hover:text-blue-300 transition py-1"><i class="fas fa-user-plus mr-1"></i>Register</a>
                         {% endif %}
                     </div>
                 </div>
                 <!-- Separator -->
-                <hr class="my-2 border-gray-200 dark:border-gray-600">
+                <hr class="my-2 border-gray-200 dark:border-gray-500">
                 <!-- Socials and Timestamp -->
                 <div class="flex justify-between items-center">
                     <div class="flex space-x-2">
-                        <a href="#" class="text-blue-400 hover:text-blue-500"><i class="fab fa-twitter"></i></a>
-                        <a href="#" class="text-blue-600 hover:text-blue-700"><i class="fab fa-facebook"></i></a>
-                        <a href="#" class="text-pink-500 hover:text-pink-600"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-blue-400 hover:text-blue-300"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-blue-600 hover:text-blue-300"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="text-pink-500 hover:text-pink-300"><i class="fab fa-instagram"></i></a>
                     </div>
-                    <p class="text-gray-500 dark:text-gray-400"><i class="fas fa-clock mr-1"></i>{{ "now"|date:"H:i, F j, Y" }}{% if special_event %} <span class="text-yellow-500">{{ special_event }}</span>{% endif %}</p>
+                    <p class="text-gray-500 dark:text-gray-300"><i class="fas fa-clock mr-1"></i>{{ "now"|date:"H:i, F j, Y" }}{% if special_event %} <span class="text-yellow-500 dark:text-yellow-400">{{ special_event }}</span>{% endif %}</p>
                 </div>
             </div>
         </nav>
