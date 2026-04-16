@@ -114,7 +114,7 @@
 
     {% if breaking_news %}
         <section class="breaking-strip bg-red-700 text-white">
-            <div class="max-w-screen-2xl mx-auto px-4 py-2 text-sm flex flex-wrap gap-3 items-center">
+            <div class="container mx-auto px-4 py-2 text-sm flex flex-wrap gap-3 items-center">
                 <span class="font-semibold uppercase tracking-wide">Breaking</span>
                 {% for article in breaking_news %}
                     <a href="{% url 'article_detail' article.slug %}" class="hover:underline">{{ article.title }}</a>
@@ -123,7 +123,7 @@
         </section>
     {% endif %}
 
-    <main id="main-content" class="max-w-screen-2xl mx-auto px-4 py-8 lg:py-10">
+    <main class="container mx-auto px-4 py-8">
         {% if messages %}
             {% for message in messages %}
                 <div class="flex items-center {% if message.tags == 'success' %}bg-green-50 border-green-500 text-green-700{% elif message.tags == 'error' %}bg-red-50 border-red-500 text-red-700{% else %}bg-blue-50 border-blue-500 text-blue-700{% endif %} border-l-4 p-4 mb-4 rounded">
@@ -135,7 +135,7 @@
     </main>
 
     <footer class="border-t border-stone-200 dark:border-gray-700 bg-white dark:bg-gray-900 mt-12">
-        <div class="max-w-screen-2xl mx-auto px-4 py-10 grid grid-cols-1 md:grid-cols-3 gap-8 text-sm">
+        <div class="container mx-auto px-4 py-10 grid grid-cols-1 md:grid-cols-3 gap-8 text-sm">
             <div>
                 <h3 class="font-semibold text-base mb-3">Sections</h3>
                 <div class="grid grid-cols-2 gap-2">

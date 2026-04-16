@@ -10,7 +10,6 @@ body {
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     color: var(--ink);
     background: var(--paper);
-    transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 h1,
@@ -93,9 +92,9 @@ h4,
     transition: all 0.25s ease;
 }
 
-.dark body {
-    background: #111827;
-    color: #f3f4f6;
+.dark {
+    background: #111827 !important;
+    color: #f3f4f6 !important;
 }
 
 .dark .nav-link,
@@ -120,11 +119,6 @@ h4,
 .dark .article-content h5,
 .dark .article-content h6 {
     color: #f3f4f6 !important;
-}
-
-.dark .site-header,
-.dark footer {
-    background: #111827;
 }
 
 .dark .prose blockquote {

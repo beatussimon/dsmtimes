@@ -63,7 +63,7 @@
             {% for item in media %}
                 {% if item.media_type == 'image' and item.media_file %}
                     <figure class="my-8">
-                        <img src="{{ item.media_file.url }}" class="w-full h-auto rounded-lg" alt="Article media" loading="lazy" decoding="async">
+                        <img src="{{ item.media_file.url }}" class="w-full h-auto rounded-lg" alt="Article media">
                         <figcaption class="text-sm text-gray-500 dark:text-gray-400 mt-2">Additional image</figcaption>
                     </figure>
                 {% elif item.media_type == 'video' and item.media_file and item.media_file.url|slice:"-4:" == ".mp4" %}
@@ -75,7 +75,7 @@
                     </div>
                 {% elif item.media_type == 'video' and item.media_url %}
                     <div class="my-8">
-                        <iframe src="{{ item.media_url|default_if_none:''|regex_replace:'^https?://(www\.)?youtube\.com/watch\?v=([^&]+).*||https://www.youtube.com/embed/$2' }}" class="w-full h-48 sm:h-64 md:h-80 rounded-lg" frameborder="0" loading="lazy" allowfullscreen></iframe>
+                        <iframe src="{{ item.media_url|default_if_none:''|regex_replace:'^https?://(www\.)?youtube\.com/watch\?v=([^&]+).*||https://www.youtube.com/embed/$2' }}" class="w-full h-48 sm:h-64 md:h-80 rounded-lg" frameborder="0" allowfullscreen></iframe>
                     </div>
                 {% endif %}
             {% endfor %}
@@ -181,7 +181,7 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 {% for related in related_articles %}
                     <article class="bg-white dark:bg-gray-800 border border-stone-200 dark:border-gray-700 rounded-lg overflow-hidden">
-                        {% if related.featured_image %}<img src="{{ related.featured_image.url }}" class="w-full h-40 object-cover" alt="{{ related.title }}" loading="lazy" decoding="async">{% endif %}
+                        {% if related.featured_image %}<img src="{{ related.featured_image.url }}" class="w-full h-40 object-cover" alt="{{ related.title }}">{% endif %}
                         <div class="p-4">
                             <p class="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400 {% if related.category.is_special %}special-category{% endif %}" data-color="{{ related.category.color }}">{{ related.category.name }}</p>
                             <h3 class="mt-2 text-lg font-semibold"><a href="{% url 'article_detail' related.slug %}" class="hover:text-blue-700 dark:hover:text-blue-400">{{ related.title }}</a></h3>
