@@ -40,13 +40,14 @@ def get_special_event():
     return None
 
 def home(request):
-    breaking_news = Article.objects.filter(breaking_news=True, status='published').order_by('-published_at')[:1]
-    featured_article = Article.objects.filter(status='published', is_premium=False).order_by('-published_at').first()
-    latest_articles = Article.objects.filter(status='published').order_by('-published_at')
+    article_base_qs = Article.objects.filter(status='published').select_related('category', 'author')
+    breaking_news = article_base_qs.filter(breaking_news=True).order_by('-published_at')[:1]
+    featured_article = article_base_qs.filter(is_premium=False).order_by('-published_at').first()
+    latest_articles = article_base_qs.order_by('-published_at')
     paginator = Paginator(latest_articles, 12)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    trending_articles = Article.objects.filter(status='published').order_by('-views_count')[:6]
+    trending_articles = article_base_qs.order_by('-views_count')[:6]
     categories = Category.objects.all()
     return render(request, 'core/home.html', {
         'breaking_news': breaking_news,
@@ -57,7 +58,11 @@ def home(request):
     })
 
 def article_detail(request, slug):
-    article = get_object_or_404(Article, slug=slug, status__in=['published', 'hidden'])
+    article = get_object_or_404(
+        Article.objects.select_related('category', 'author').prefetch_related('tags', 'likes'),
+        slug=slug,
+        status__in=['published', 'hidden']
+    )
     if article.status == 'hidden' and (not request.user.is_authenticated or not hasattr(request.user, 'userprofile') or not request.user.userprofile.is_chief_editor):
         return redirect('home')
     article.views_count += 1
@@ -66,7 +71,12 @@ def article_detail(request, slug):
     if article.is_premium and (not request.user.is_authenticated or not hasattr(request.user, 'userprofile') or not request.user.userprofile.is_subscriber):
         return render(request, 'core/premium_content.html', {'article': article})
     
-    comments = Comment.objects.filter(article=article, parent=None).annotate(like_count=Count('likes'))
+    comments = (
+        Comment.objects.filter(article=article, parent=None)
+        .select_related('user')
+        .prefetch_related('likes', 'replies__likes', 'replies__user')
+        .annotate(like_count=Count('likes'))
+    )
     media = article.media.all()
     
     if request.method == 'POST' and request.user.is_authenticated:
@@ -99,7 +109,12 @@ def article_detail(request, slug):
                 article.likes.add(request.user)
         return redirect('article_detail', slug=slug)
     
-    related_articles = Article.objects.filter(category=article.category, status='published').exclude(id=article.id).order_by('-published_at')[:3]
+    related_articles = (
+        Article.objects.filter(category=article.category, status='published')
+        .select_related('category', 'author')
+        .exclude(id=article.id)
+        .order_by('-published_at')[:3]
+    )
     return render(request, 'core/article_detail.html', {
         'article': article,
         'comments': comments,
@@ -218,7 +233,7 @@ def search(request):
     query = request.GET.get('q')
     results = []
     if query:
-        results = Article.objects.filter(
+        results = Article.objects.select_related('category', 'author').filter(
             Q(title__icontains=query) | Q(summary__icontains=query) | Q(content__icontains=query),
             status='published'
         )
@@ -254,7 +269,7 @@ def custom_logout(request):
     return redirect('home')
 
 def live_updates(request):
-    live_articles = Article.objects.filter(breaking_news=True, status='published').order_by('-published_at')
+    live_articles = Article.objects.filter(breaking_news=True, status='published').select_related('category', 'author').order_by('-published_at')
     paginator = Paginator(live_articles, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
@@ -262,7 +277,7 @@ def live_updates(request):
 
 def category_detail(request, slug):
     category = get_object_or_404(Category, slug=slug)
-    articles = Article.objects.filter(category=category, status='published').order_by('-published_at')
+    articles = Article.objects.filter(category=category, status='published').select_related('category', 'author').order_by('-published_at')
     paginator = Paginator(articles, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
@@ -287,7 +302,7 @@ def feedback(request):
     return render(request, 'core/feedback.html')
 
 def blog(request):
-    blog_posts = BlogPost.objects.filter(status='published').order_by('-published_at')
+    blog_posts = BlogPost.objects.filter(status='published').select_related('author').order_by('-published_at')
     paginator = Paginator(blog_posts, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
