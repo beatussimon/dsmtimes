@@ -2,100 +2,81 @@
 {% block title %}DSM Times{% endblock %}
 {% block content %}
     {% if featured_article %}
-        <section class="max-w-6xl mx-auto mb-12 px-4 sm:px-0">
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
-                {% if featured_article.featured_image %}
-                    <img src="{{ featured_article.featured_image.url }}" class="w-full h-48 sm:h-64 md:h-96 object-cover" alt="{{ featured_article.title }}">
-                {% else %}
-                    <div class="w-full h-48 sm:h-64 md:h-96 bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-500 dark:text-gray-400">No Image</div>
-                {% endif %}
-                <div class="p-4 sm:p-6">
-                    <span class="text-sm text-gray-500 dark:text-gray-400 {% if featured_article.category.is_special %}special-category{% endif %}" data-color="{{ featured_article.category.color }}">
-                        {{ featured_article.category.name }}
-                        {% if featured_article.category.is_special %}
-                            <span class="text-xs bg-red-500 text-white rounded-full px-1">!</span>
-                        {% endif %}
-                    </span>
-                    <h2 class="text-2xl sm:text-3xl font-bold mt-2 text-gray-900 dark:text-white">{{ featured_article.title }}</h2>
-                    <p class="mt-2 text-gray-600 dark:text-gray-300">{{ featured_article.summary }}</p>
-                    <a href="{% url 'article_detail' featured_article.slug %}" class="mt-4 inline-block text-blue-600 hover:underline">Read More</a>
-                </div>
-            </div>
+        <section class="max-w-6xl mx-auto mb-12">
+            <a href="{% url 'article_detail' featured_article.slug %}" class="block">
+                <article class="feature-hero bg-white dark:bg-gray-800 rounded-xl overflow-hidden border border-stone-200 dark:border-gray-700">
+                    <div class="grid lg:grid-cols-2 gap-0">
+                        <div>
+                            {% if featured_article.featured_image %}
+                                <img src="{{ featured_article.featured_image.url }}" class="w-full h-72 lg:h-full object-cover" alt="{{ featured_article.title }}">
+                            {% else %}
+                                <div class="w-full h-72 lg:h-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-500">No Image</div>
+                            {% endif %}
+                        </div>
+                        <div class="p-6 lg:p-10 flex flex-col justify-center">
+                            <p class="text-xs uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-3 {% if featured_article.category.is_special %}special-category{% endif %}" data-color="{{ featured_article.category.color }}">
+                                {{ featured_article.category.name }}
+                            </p>
+                            <h1 class="text-3xl md:text-4xl leading-tight font-bold text-gray-900 dark:text-white">{{ featured_article.title }}</h1>
+                            <p class="mt-4 text-base md:text-lg text-gray-700 dark:text-gray-300">{{ featured_article.summary }}</p>
+                            <p class="mt-6 text-blue-700 dark:text-blue-400 font-semibold">Read full story →</p>
+                        </div>
+                    </div>
+                </article>
+            </a>
         </section>
     {% endif %}
 
-    <section class="max-w-6xl mx-auto px-4 sm:px-0">
-        <h2 class="text-2xl font-semibold mb-6 text-gray-900 dark:text-white">Latest Articles</h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <section class="max-w-6xl mx-auto">
+        <div class="flex items-end justify-between mb-6">
+            <h2 class="text-2xl md:text-3xl font-bold">Latest Articles</h2>
+            <p class="text-sm text-gray-500">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {% for article in page_obj %}
-                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition">
-                    {% if article.featured_image %}
-                        <img src="{{ article.featured_image.url }}" class="w-full h-48 object-cover" alt="{{ article.title }}">
-                    {% else %}
-                        <div class="w-full h-48 bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-500 dark:text-gray-400">No Image</div>
-                    {% endif %}
-                    <div class="p-4">
-                        <span class="text-sm text-gray-500 dark:text-gray-400 {% if article.category.is_special %}special-category{% endif %}" data-color="{{ article.category.color }}">
-                            {{ article.category.name }}
-                            {% if article.category.is_special %}
-                                <span class="text-xs bg-red-500 text-white rounded-full px-1">!</span>
-                            {% endif %}
-                        </span>
-                        <h3 class="text-lg font-semibold mt-2 text-gray-900 dark:text-white">{{ article.title }}</h3>
-                        <p class="mt-2 text-gray-600 dark:text-gray-300">{{ article.summary|truncatewords:15 }}</p>
-                        <a href="{% url 'article_detail' article.slug %}" class="mt-2 inline-block text-blue-600 hover:underline">Read More</a>
+                <article class="story-card bg-white dark:bg-gray-800 border border-stone-200 dark:border-gray-700 rounded-xl overflow-hidden h-full">
+                    <a href="{% url 'article_detail' article.slug %}" class="block">
+                        {% if article.featured_image %}
+                            <img src="{{ article.featured_image.url }}" class="w-full h-52 object-cover" alt="{{ article.title }}">
+                        {% else %}
+                            <div class="w-full h-52 bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-500">No Image</div>
+                        {% endif %}
+                    </a>
+                    <div class="p-5">
+                        <p class="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400 {% if article.category.is_special %}special-category{% endif %}" data-color="{{ article.category.color }}">{{ article.category.name }}</p>
+                        <h3 class="mt-2 text-xl font-semibold leading-snug"><a href="{% url 'article_detail' article.slug %}" class="hover:text-blue-700 dark:hover:text-blue-400">{{ article.title }}</a></h3>
+                        <p class="mt-3 text-gray-600 dark:text-gray-300">{{ article.summary|truncatewords:18 }}</p>
+                        <a href="{% url 'article_detail' article.slug %}" class="mt-4 inline-block text-sm font-semibold text-blue-700 dark:text-blue-400">Continue reading</a>
                     </div>
-                </div>
+                </article>
             {% empty %}
                 <p class="text-gray-600 dark:text-gray-300 col-span-full">No articles available.</p>
             {% endfor %}
         </div>
-        <div class="mt-6 flex justify-center space-x-2">
+
+        <div class="mt-8 flex justify-center items-center gap-3">
             {% if page_obj.has_previous %}
-                <a href="?page={{ page_obj.previous_page_number }}" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Previous</a>
+                <a href="?page={{ page_obj.previous_page_number }}" class="px-4 py-2 border border-stone-300 dark:border-gray-600 rounded hover:bg-stone-100 dark:hover:bg-gray-800">Previous</a>
             {% endif %}
-            <span class="px-4 py-2">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
             {% if page_obj.has_next %}
-                <a href="?page={{ page_obj.next_page_number }}" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Next</a>
+                <a href="?page={{ page_obj.next_page_number }}" class="px-4 py-2 border border-stone-300 dark:border-gray-600 rounded hover:bg-stone-100 dark:hover:bg-gray-800">Next</a>
             {% endif %}
         </div>
     </section>
 
     {% if trending_articles %}
-        <section class="max-w-6xl mx-auto mt-12 px-4 sm:px-0">
-            <h2 class="text-2xl font-semibold mb-6 text-gray-900 dark:text-white">Trending Now</h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <section class="max-w-6xl mx-auto mt-14 pt-8 border-t border-stone-200 dark:border-gray-700">
+            <h2 class="text-2xl md:text-3xl font-bold mb-6">Trending Now</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {% for article in trending_articles %}
-                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition">
-                        {% if article.featured_image %}
-                            <img src="{{ article.featured_image.url }}" class="w-full h-48 object-cover" alt="{{ article.title }}">
-                        {% else %}
-                            <div class="w-full h-48 bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-500 dark:text-gray-400">No Image</div>
-                        {% endif %}
-                        <div class="p-4">
-                            <span class="text-sm text-gray-500 dark:text-gray-400 {% if article.category.is_special %}special-category{% endif %}" data-color="{{ article.category.color }}">
-                                {{ article.category.name }}
-                                {% if article.category.is_special %}
-                                    <span class="text-xs bg-red-500 text-white rounded-full px-1">!</span>
-                                {% endif %}
-                            </span>
-                            <h3 class="text-lg font-semibold mt-2 text-gray-900 dark:text-white">{{ article.title }}</h3>
-                            <a href="{% url 'article_detail' article.slug %}" class="mt-2 inline-block text-blue-600 hover:underline">Read More</a>
-                        </div>
-                    </div>
+                    <article class="bg-white dark:bg-gray-800 border border-stone-200 dark:border-gray-700 rounded-lg p-4">
+                        <p class="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400 {% if article.category.is_special %}special-category{% endif %}" data-color="{{ article.category.color }}">{{ article.category.name }}</p>
+                        <h3 class="mt-2 text-lg font-semibold"><a href="{% url 'article_detail' article.slug %}" class="hover:text-blue-700 dark:hover:text-blue-400">{{ article.title }}</a></h3>
+                        <a href="{% url 'article_detail' article.slug %}" class="mt-3 inline-block text-sm font-semibold text-blue-700 dark:text-blue-400">Read more</a>
+                    </article>
                 {% endfor %}
             </div>
         </section>
     {% endif %}
-
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            document.querySelectorAll('.special-category').forEach(element => {
-                const color = element.getAttribute('data-color');
-                if (color) {
-                    element.style.color = color;
-                }
-            });
-        });
-    </script>
 {% endblock %}
