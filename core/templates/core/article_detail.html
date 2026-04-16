@@ -1,6 +1,36 @@
 {% extends 'core/base.html' %}
 {% load article_tags %}
 {% block title %}{{ article.title }} - DSM Times{% endblock %}
+{% block meta_description %}{{ article.summary|default:article.title|truncatechars:155 }}{% endblock %}
+{% block og_title %}{{ article.title }} - DSM Times{% endblock %}
+{% block og_description %}{{ article.summary|default:article.title|truncatechars:200 }}{% endblock %}
+{% block og_type %}article{% endblock %}
+{% block twitter_title %}{{ article.title }} - DSM Times{% endblock %}
+{% block twitter_description %}{{ article.summary|default:article.title|truncatechars:200 }}{% endblock %}
+{% block extra_head %}
+    {% if article.featured_image %}
+        <meta property="og:image" content="{{ article.featured_image.url }}">
+        <meta name="twitter:image" content="{{ article.featured_image.url }}">
+    {% endif %}
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "NewsArticle",
+        "headline": "{{ article.title|escapejs }}",
+        "datePublished": "{{ article.published_at|date:'c' }}",
+        "dateModified": "{{ article.updated_at|date:'c' }}",
+        "author": {
+            "@type": "Person",
+            "name": "{{ article.author.username|escapejs }}"
+        },
+        "publisher": {
+            "@type": "Organization",
+            "name": "DSM Times"
+        },
+        "description": "{{ article.summary|default:article.title|striptags|escapejs }}"
+    }
+    </script>
+{% endblock %}
 {% block content %}
 <article class="max-w-4xl mx-auto">
     <header class="mb-8 pb-6 border-b border-stone-200 dark:border-gray-700">
@@ -19,7 +49,7 @@
 
     {% if article.featured_image %}
         <figure class="mb-8">
-            <img src="{{ article.featured_image.url }}" class="w-full max-h-[520px] object-cover rounded-xl" alt="{{ article.title }}">
+            <img src="{{ article.featured_image.url }}" class="w-full max-h-[520px] object-cover rounded-xl" alt="{{ article.title }}" fetchpriority="high" decoding="async">
         </figure>
     {% endif %}
 
